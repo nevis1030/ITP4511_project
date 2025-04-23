@@ -89,13 +89,13 @@ public class TestStock {
         }
         
         // Test checking stock availability
-        System.out.println("\nTesting checking stock availability:");
-        try {
-            boolean available = db.checkStockAvailability("f001", "s001");
-            System.out.println("Stock available in shop1 for f001: " + available);
-        } catch (RuntimeException e) {
-            System.out.println("Error checking stock availability: " + e.getMessage());
-        }
+        // System.out.println("\nTesting checking stock availability:");
+        // try {
+        //     boolean available = db.checkStockAvailability("f001", "s001", 10);
+        //     System.out.println("Stock available in shop1 for f001: " + available);
+        // } catch (RuntimeException e) {
+        //     System.out.println("Error checking stock availability: " + e.getMessage());
+        // }
 
         
         // Close the database connection

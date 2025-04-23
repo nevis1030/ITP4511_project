@@ -2,8 +2,7 @@ package ict.db;
 
 import java.util.ArrayList;
 import ict.bean.UserBean;
-import ict.bean.FruitBean;
-import ict.bean.StockLevelBean;
+
 
 public class TestMain {
     public static void main(String[] args) {
