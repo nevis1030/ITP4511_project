@@ -4,11 +4,9 @@ public class RegionBean {
     private String regionId;
     private String regionName;
 
-    // Default constructor
     public RegionBean() {
     }
 
-    // Parameterized constructor
     public RegionBean(String regionId, String regionName) {
         this.regionId = regionId;
         this.regionName = regionName;

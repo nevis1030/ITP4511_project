@@ -5,11 +5,9 @@ public class WarehouseBean {
     private String cityId;
     private String warehouseName;
 
-    // Default constructor
     public WarehouseBean() {
     }
 
-    // Parameterized constructor
     public WarehouseBean(String warehouseId, String cityId, String warehouseName) {
         this.warehouseId = warehouseId;
         this.cityId = cityId;
