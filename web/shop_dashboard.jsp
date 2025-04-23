@@ -161,12 +161,30 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <tr>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxx</td>
+                                                    <td>2</td>
+                                                    <td>Pending</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxx</td>
+                                                    <td>2</td>
+                                                    <td>Approved</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxx</td>
+                                                    <td>2</td>
+                                                    <td>Denied</td>
+                                                </tr>
                                                 <!-- Add dynamic data here -->
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                
+
                             </c:when>
                             <c:otherwise>
                                 <p>Select a tab to begin</p>
@@ -206,19 +224,30 @@
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Date</th>
-                                                    <th>From</th>
+                                                    <th>To</th>
                                                     <th>Fruit</th>
                                                     <th>Quantity</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <tr>
+                                                    <td>s00xs00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td>
+                                                    <td>
+                                                        <button type="submit" class="btn btn-primary">Approve</button>
+                                                        <button type="submit" class="btn btn-danger">Deny</button>
+                                                    </td>
+                                                </tr>
                                                 <!-- Add dynamic data here -->
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                
+
                             </c:when>
                             <c:when test="${param.subtab == 'approval-record'}">
                                 <!-- approval Records Table -->
@@ -229,18 +258,43 @@
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Date</th>
-                                                    <th>From</th>
+                                                    <th>To</th>
                                                     <th>Fruit</th>
                                                     <th>Quantity</th>
+                                                    <th>Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <tr>
+                                                    <td>s00xs00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Approved</td> 
+                                                </tr>
+                                                <tr>
+                                                    <td>s00xs00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Denied</td> 
+                                                </tr>
+                                                <tr>
+                                                    <td>s00xs00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Pending</td> 
+                                                </tr>
                                                 <!-- Add dynamic data here -->
                                             </tbody>
                                         </table>  
                                     </div>
                                 </div>
-                                
+
                             </c:when>
                             <c:when test="${param.subtab == 'borrow-request'}">
                                 <!-- Reserve Request Form -->
@@ -327,15 +381,40 @@
                                                     <th>From</th>
                                                     <th>Fruit</th>
                                                     <th>Quantity</th>
+                                                    <th>Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <tr>
+                                                    <td>s00xs00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Approved</td> 
+                                                </tr>
+                                                <tr>
+                                                    <td>s00xs00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Denied</td> 
+                                                </tr>
+                                                <tr>
+                                                    <td>s00xs00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Pending</td> 
+                                                </tr>
                                                 <!-- Add dynamic data here -->
                                             </tbody>
                                         </table> 
                                     </div>
                                 </div>
-                                
+
                             </c:when>
                             <c:otherwise>
                                 <p>Select a tab to begin</p>
@@ -355,9 +434,16 @@
                                             <th>ID</th>
                                             <th>Fruit</th>
                                             <th>Quantity</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <tr>
+                                            <td>f00x</td>
+                                            <td>Apple</td>
+                                            <td>20</td>
+                                            <td><button type="submit" class="btn btn-primary">Update</button></td>
+                                        </tr>
                                         <!-- Add dynamic data here -->
                                     </tbody>
                                 </table>

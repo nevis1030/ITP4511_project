@@ -81,14 +81,15 @@
 
                         <c:choose>
                             <c:when test="${param.subtab == 'request'}">
-                                <!-- Reserve Request Form -->
+                                <!-- Reserve Request approval -->
                                 <div class="card">
                                     <div class="card-body">
                                         <table class="table">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
-                                                    <th>Date</th>
+                                                    <th>Order Date</th>
+                                                    <th>End Date</th>
                                                     <th>From</th>
                                                     <th>Fruit</th>
                                                     <th>Quantity</th>
@@ -96,6 +97,18 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <tr>
+                                                    <td>s00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>order date +14</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>
+                                                        <button type="submit" class="btn btn-primary">Approve</button>
+                                                        <button type="submit" class="btn btn-danger">Deny</button>
+                                                    </td> 
+                                                </tr>
                                                 <!-- Add dynamic data here -->
                                             </tbody>
                                     </div>
@@ -109,19 +122,45 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
+                                                    <th>ID</th>
                                                     <th>Date</th>
+                                                    <th>From</th>
                                                     <th>Fruit</th>
                                                     <th>Quantity</th>
                                                     <th>Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <tr>
+                                                    <td>s00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Approved</td> 
+                                                </tr>
+                                                <tr>
+                                                    <td>s00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Denied</td> 
+                                                </tr>
+                                                <tr>
+                                                    <td>s00xf00x</td>
+                                                    <td>xxxx-xx-xx</td>
+                                                    <td>xxxx shop 1</td>
+                                                    <td>Apple</td>
+                                                    <td>10</td> 
+                                                    <td>Pending</td> 
+                                                </tr>
                                                 <!-- Add dynamic data here -->
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                
+
                             </c:when>
                             <c:otherwise>
                                 <p>Select a tab to begin</p>
@@ -142,9 +181,16 @@
                                             <th>ID</th>
                                             <th>Fruit</th>
                                             <th>Quantity</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <tr>
+                                            <td>f00x</td>
+                                            <td>Apple</td>
+                                            <td>20</td>
+                                            <td><button type="submit" class="btn btn-primary">Update</button></td>
+                                        </tr>
                                         <!-- Add dynamic data here -->
                                     </tbody>
                                 </table>
