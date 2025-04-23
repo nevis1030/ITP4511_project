@@ -3,9 +3,12 @@
     Created on : 23 Apr 2025, 1:42:51 pm
     Author     : local_user
 --%>
-
+<%@page import="java.time.LocalDate" %>
+<%@page import="java.time.ZoneId" %>
+<%@page import="java.util.Date" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="pageTitle" value="Shop Staff" scope="request"/>
 <!DOCTYPE html>
 <html>
@@ -31,7 +34,9 @@
                 <!-- Sidebar -->
                 <div class="col-md-3 col-lg-2 sidebar">
                     <div class="d-flex flex-column p-3" style="height: 100%">
-                        <h4 class="mb-3">AIB Dashboard</h4>
+                        <h4 class="mb-3">
+                            <a href="?" class="text-decoration-none text-reset">AIB Dashboard</a>
+                        </h4>
                         <nav class="nav flex-column">
                             <a class="nav-link ${param.tab == 'reserving' ? 'active' : ''}" 
                                href="?tab=reserving">Reserving Fruit</a>
@@ -82,26 +87,90 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">New Reservation</h5>
-                                        <!-- Add reservation form here -->
+                                        <%-- System-generated dates --%>
+                                        <%
+                                            LocalDate localStartDate = LocalDate.now();
+                                            LocalDate localEndDate = localStartDate.plusDays(14);
+                                            Date startDate = Date.from(localStartDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                                            Date endDate = Date.from(localEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                                        %>
+
+                                        <c:set var="startDate" value="<%= startDate %>" />
+                                        <c:set var="endDate" value="<%= endDate %>" />
+
+                                        <form action="${pageContext.request.contextPath}/reservations/create" method="post">
+
+                                            <%-- Hidden date fields --%>
+                                            <input type="hidden" name="startDate" value="${startDate}">
+                                            <input type="hidden" name="endDate" value="${endDate}">
+
+                                            <div class="row g-3">
+                                                <!-- Date Display -->
+                                                <div class="col-12">
+                                                    <div class="alert alert-info">
+                                                        <strong>Reservation Period:</strong><br>
+                                                        Start Date: <fmt:formatDate value="${startDate}" pattern="yyyy-MM-dd" /><br>
+                                                        End Date: <fmt:formatDate value="${endDate}" pattern="yyyy-MM-dd" />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Fruit Selection -->
+                                                <div class="col-md-6">
+                                                    <label for="fruitId" class="form-label">Select Fruit <span class="text-danger">*</span></label>
+                                                    <select class="form-select" id="fruitId" name="fruitId" required>
+                                                        <option value="">-- Select Fruit --</option>
+                                                        <c:forEach items="${availableFruits}" var="fruit">
+                                                            <option value="${fruit.fruitId}" ${param.fruitId == fruit.fruitId ? 'selected' : ''}>
+                                                                ${fruit.name} (Source: ${fruit.sourceCity})
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Quantity Input -->
+                                                <div class="col-md-6">
+                                                    <label for="quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+                                                    <input type="number" class="form-control" id="quantity" 
+                                                           name="quantity" min="1" max="1000" 
+                                                           value="${param.quantity}" required>
+                                                    <div class="form-text">Enter quantity between 1-1000</div>
+                                                </div>
+
+                                                <!-- Submit Button -->
+                                                <div class="col-12">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-send me-2"></i>Submit Reservation
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </c:when>
                             <c:when test="${param.subtab == 'record'}">
                                 <!-- Reservation Records Table -->
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Fruit</th>
-                                            <th>Quantity</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Add dynamic data here -->
-                                    </tbody>
-                                </table>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Fruit</th>
+                                                    <th>Quantity</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Add dynamic data here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
                             </c:when>
+                            <c:otherwise>
+                                <p>Select a tab to begin</p>
+                            </c:otherwise>
                         </c:choose>
                     </c:if>
 
@@ -127,7 +196,151 @@
                             </li>
                         </ul>
 
-                        <!-- Add content for borrowing subtabs -->
+                        <c:choose>
+                            <c:when test="${param.subtab == 'pending'}">
+                                <!-- Pending Records Table -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Date</th>
+                                                    <th>From</th>
+                                                    <th>Fruit</th>
+                                                    <th>Quantity</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Add dynamic data here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                            </c:when>
+                            <c:when test="${param.subtab == 'approval-record'}">
+                                <!-- approval Records Table -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Date</th>
+                                                    <th>From</th>
+                                                    <th>Fruit</th>
+                                                    <th>Quantity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Add dynamic data here -->
+                                            </tbody>
+                                        </table>  
+                                    </div>
+                                </div>
+                                
+                            </c:when>
+                            <c:when test="${param.subtab == 'borrow-request'}">
+                                <!-- Reserve Request Form -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">New Borrow</h5>
+                                        <%-- System-generated dates --%>
+                                        <%
+                                            LocalDate localStartDate = LocalDate.now();
+                                            Date startDate = Date.from(localStartDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                                        %>
+
+                                        <c:set var="startDate" value="<%= startDate %>" />
+
+                                        <form action="${pageContext.request.contextPath}/borrow/create" method="post">
+
+                                            <%-- Hidden date fields --%>
+                                            <input type="hidden" name="startDate" value="${startDate}">
+
+                                            <div class="row g-3">
+                                                <!-- Date Display -->
+                                                <div class="col-12">
+                                                    <div class="alert alert-info">
+                                                        <strong>Borrow Date:</strong><br>
+                                                        Date: <fmt:formatDate value="${startDate}" pattern="yyyy-MM-dd" />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Shop Selection -->
+                                                <div class="col-md-6">
+                                                    <label for="shopId" class="form-label">Select Shop <span class="text-danger">*</span></label>
+                                                    <select class="form-select" id="shopId" name="shopId" required>
+                                                        <option value="">-- Select Shop --</option>
+                                                        <c:forEach items="${availableShops}" var="shop">
+                                                            <option value="${shop.shopId}" ${param.shopId == shop.shopId ? 'selected' : ''}>
+                                                                ${shop.name} (Source: ${shop.sourceCity})
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Fruit Selection -->
+                                                <div class="col-md-6">
+                                                    <label for="fruitId" class="form-label">Select Fruit <span class="text-danger">*</span></label>
+                                                    <select class="form-select" id="fruitId" name="fruitId" required>
+                                                        <option value="">-- Select Fruit --</option>
+                                                        <c:forEach items="${availableFruits}" var="fruit">
+                                                            <option value="${fruit.fruitId}" ${param.fruitId == fruit.fruitId ? 'selected' : ''}>
+                                                                ${fruit.name} (Source: ${fruit.sourceCity})
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Quantity Input -->
+                                                <div class="col-md-6">
+                                                    <label for="quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+                                                    <input type="number" class="form-control" id="quantity" 
+                                                           name="quantity" min="1" max="1000" 
+                                                           value="${param.quantity}" required>
+                                                    <div class="form-text">Enter quantity between 1-1000</div>
+                                                </div>
+
+                                                <!-- Submit Button -->
+                                                <div class="col-12">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-send me-2"></i>Submit Reservation
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </c:when>
+                            <c:when test="${param.subtab == 'borrow-record'}">
+                                <!-- Borrow Records Table -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Date</th>   
+                                                    <th>From</th>
+                                                    <th>Fruit</th>
+                                                    <th>Quantity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Add dynamic data here -->
+                                            </tbody>
+                                        </table> 
+                                    </div>
+                                </div>
+                                
+                            </c:when>
+                            <c:otherwise>
+                                <p>Select a tab to begin</p>
+                            </c:otherwise>
+                        </c:choose>
                     </c:if>
 
                     <!-- Stock Level Content -->
@@ -135,7 +348,19 @@
                         <h3>Stock Level</h3>
                         <div class="card">
                             <div class="card-body">
-                                <!-- Add stock level visualization/table here -->
+                                <!-- Borrow Records Table -->
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Fruit</th>
+                                            <th>Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Add dynamic data here -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </c:if>
@@ -173,6 +398,9 @@
                                     </div>
                                 </div>
                             </c:when>
+                            <c:otherwise>
+                                <p>Select a tab to begin</p>
+                            </c:otherwise>
                         </c:choose>
                     </c:if>
                 </div>

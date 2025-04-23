@@ -3,9 +3,12 @@
     Created on : 23 Apr 2025, 1:42:51 pm
     Author     : local_user
 --%>
-
+<%@page import="java.time.LocalDate" %>
+<%@page import="java.time.ZoneId" %>
+<%@page import="java.util.Date" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="pageTitle" value="Warehouse Staff" scope="request"/>
 <!DOCTYPE html>
 <html>
@@ -31,7 +34,9 @@
                 <!-- Sidebar -->
                 <div class="col-md-3 col-lg-2 sidebar">
                     <div class="d-flex flex-column p-3" style="height: 100%">
-                        <h4 class="mb-3">AIB Dashboard</h4>
+                        <h4 class="mb-3">
+                            <a href="?" class="text-decoration-none text-reset">AIB Dashboard</a>
+                        </h4>
                         <nav class="nav flex-column">
                             <a class="nav-link ${param.tab == 'reserving' ? 'active' : ''}" 
                                href="?tab=reserving">Reserving Fruit</a>
@@ -79,27 +84,48 @@
                                 <!-- Reserve Request Form -->
                                 <div class="card">
                                     <div class="card-body">
-                                        <h5 class="card-title">New Reservation</h5>
-                                        <!-- Add reservation form here -->
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Date</th>
+                                                    <th>From</th>
+                                                    <th>Fruit</th>
+                                                    <th>Quantity</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Add dynamic data here -->
+                                            </tbody>
                                     </div>
                                 </div>
+                                </table>
                             </c:when>
                             <c:when test="${param.subtab == 'record'}">
                                 <!-- Reservation Records Table -->
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Fruit</th>
-                                            <th>Quantity</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Add dynamic data here -->
-                                    </tbody>
-                                </table>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Fruit</th>
+                                                    <th>Quantity</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Add dynamic data here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
                             </c:when>
+                            <c:otherwise>
+                                <p>Select a tab to begin</p>
+                            </c:otherwise>
                         </c:choose>
                     </c:if>
 
@@ -109,7 +135,19 @@
                         <h3>Stock Level</h3>
                         <div class="card">
                             <div class="card-body">
-                                <!-- Add stock level visualization/table here -->
+                                <!-- Borrow Records Table -->
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Fruit</th>
+                                            <th>Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Add dynamic data here -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </c:if>
@@ -147,6 +185,9 @@
                                     </div>
                                 </div>
                             </c:when>
+                            <c:otherwise>
+                                <p>Select a tab to begin</p>
+                            </c:otherwise>
                         </c:choose>
                     </c:if>
                 </div>
