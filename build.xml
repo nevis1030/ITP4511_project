@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="itp4511_Assignment" default="default" basedir=".">
-    <description>Builds, tests, and runs the project itp4511_Assignment.</description>
+<project name="itp4511_project" default="default" basedir=".">
+    <description>Builds, tests, and runs the project itp4511_project.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
