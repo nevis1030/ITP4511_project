@@ -47,7 +47,7 @@
                             <a class="nav-link ${param.tab == 'account' ? 'active' : ''}" 
                                href="?tab=account">Account</a>
                         </nav>
-                        <a class="mt-auto btn btn-primary" href="index.jsp">Logout</a>  
+                        <a class="mt-auto btn btn-primary" href="logout">Logout</a>  
                     </div>
                 </div>
 
