@@ -35,7 +35,7 @@
     </head>
     <body>
         <c:if test="${sessionScope.user == null}">
-            <c:redirect url="login"/>
+            <c:redirect url="login.jsp"/>
         </c:if>
 
         <div class="container-fluid">
