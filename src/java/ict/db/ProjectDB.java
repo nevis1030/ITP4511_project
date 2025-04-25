@@ -282,6 +282,31 @@ public class ProjectDB {
         }
     }
 
+    public UserBean login(String username, String password) {
+        UserBean user = null;
+        String query = "SELECT * FROM user WHERE username = ? AND password = ?";
+        
+        try (PreparedStatement stmt = prepareStatement(query)) {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    user = new UserBean();
+                    user.setUserId(rs.getString("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setRole(rs.getInt("role"));
+                    user.setShopId(rs.getString("shop_id"));
+                    user.setWarehouseId(rs.getString("warehouse_id"));
+                    user.setDisplayName(rs.getString("display_name"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Login error: " + e.getMessage(), e);
+        }
+        
+        return user;
+    }
 
     //fruit
     public synchronized String getNextFruitId() {
@@ -409,7 +434,8 @@ public class ProjectDB {
         }
     }
 
-    public StockLevelBean getStockByShop(String shopId) {
+    public ArrayList<StockLevelBean> getStockByShop(String shopId) {
+        ArrayList<StockLevelBean> stocks = new ArrayList<>();
         try {
             String query = "SELECT sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id, SUM(sl.quantity) as total_quantity "
                        + "FROM stocklevel sl "
@@ -425,9 +451,9 @@ public class ProjectDB {
                 stock.setFruitId(rs.getString("fruit_id"));
                 stock.setWarehouseId(rs.getString("warehouse_id"));
                 stock.setQuantity(rs.getInt("total_quantity"));
-                return stock;
+                stocks.add(stock);
             }
-            return null;
+            return stocks;
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to get stock by shop", ex);
         }
@@ -483,6 +509,40 @@ public class ProjectDB {
             return stocks;
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to get stock by region", ex);
+        }
+    }
+
+    public StockLevelBean getStockByShopAndFruit(String shopId, String fruitId) {
+        try {
+            String query = "SELECT sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id, sl.quantity, f.fruit_name "
+                       + "FROM stocklevel sl "
+                       + "JOIN fruit f ON sl.fruit_id = f.fruit_id "
+                       + "WHERE sl.shop_id = ? AND sl.fruit_id = ?";
+            
+            PreparedStatement pstmt = prepareStatement(query);
+            pstmt.setString(1, shopId);
+            pstmt.setString(2, fruitId);
+            
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                StockLevelBean stock = new StockLevelBean();
+                stock.setStockId(rs.getString("stock_id"));
+                stock.setShopId(rs.getString("shop_id"));
+                stock.setFruitId(rs.getString("fruit_id"));
+                stock.setWarehouseId(rs.getString("warehouse_id"));
+                stock.setQuantity(rs.getInt("quantity"));
+                stock.setFruitName(rs.getString("fruit_name"));
+                
+                return stock;
+            }
+            
+            rs.close();
+            pstmt.close();
+            
+            return null;
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error getting stock level", ex);
         }
     }
 

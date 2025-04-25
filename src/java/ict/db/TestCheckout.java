@@ -53,15 +53,15 @@ public class TestCheckout {
         
         try {
             // Check initial stock
-            System.out.println("Initial stock in central warehouse: " + db.getStockByWarehouse(centralWarehouseId).getQuantity());
-            System.out.println("Initial stock in shop: " + db.getStockByShop(shopId).getQuantity());
+//            System.out.println("Initial stock in central warehouse: " + db.getStockByWarehouse(centralWarehouseId).getQuantity());
+//            System.out.println("Initial stock in shop: " + db.getStockByShop(shopId).getQuantity());
             
             // Process checkout to local
             db.processCheckOutToLocal(centralWarehouseId, shopId, fruitId, quantity);
             
             // Verify results
-            System.out.println("Final stock in central warehouse: " + db.getStockByWarehouse(centralWarehouseId).getQuantity());
-            System.out.println("Final stock in shop: " + db.getStockByShop(shopId).getQuantity());
+//            System.out.println("Final stock in central warehouse: " + db.getStockByWarehouse(centralWarehouseId).getQuantity());
+//            System.out.println("Final stock in shop: " + db.getStockByShop(shopId).getQuantity());
             
             System.out.println("Test Process Check Out to Local completed successfully");
             

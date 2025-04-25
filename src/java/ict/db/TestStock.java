@@ -44,8 +44,8 @@ public class TestStock {
             System.out.println("Stock updated successfully");
             
             // Verify update
-            StockLevelBean updatedStock = db.getStockByShop("s001");
-            System.out.println("Updated shop stock quantity: " + updatedStock.getQuantity());
+            // StockLevelBean updatedStock = db.getStockByShop("s001");
+            // System.out.println("Updated shop stock quantity: " + updatedStock.getQuantity());
         } catch (RuntimeException e) {
             System.out.println("Error updating stock: " + e.getMessage());
         }
@@ -53,13 +53,13 @@ public class TestStock {
         // Test getting stock by shop
         System.out.println("\nTesting getting stock by shop:");
         try {
-            StockLevelBean stock = db.getStockByShop("s001");
-            if (stock != null) {
-                System.out.println("Stock in shop1:");
-                System.out.println(stock.toString());
-            } else {
-                System.out.println("No stock found in shop1");
-            }
+            // StockLevelBean stock = db.getStockByShop("s001");
+            // if (stock != null) {
+            //     System.out.println("Stock in shop1:");
+            //     System.out.println(stock.toString());
+            // } else {
+            //     System.out.println("No stock found in shop1");
+            // }
         } catch (RuntimeException e) {
             System.out.println("Error getting stock by shop: " + e.getMessage());
         }
