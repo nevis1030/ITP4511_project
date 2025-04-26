@@ -49,9 +49,6 @@
                 </div>
             </div>
         </div>
-        <a href="shop_dashboard.jsp">shop staff</a>
-        <a href="warehouse_dashboard.jsp">warehouse staff</a>
-        <a href="senior_dashboard.jsp">senior management</a>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

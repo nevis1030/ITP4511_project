@@ -14,6 +14,8 @@ import ict.bean.ReservationBean;
 import ict.bean.BorrowBean;
 import ict.bean.ShopBean;
 import ict.bean.CityBean;
+import ict.bean.ConsumptionBean;
+import ict.util.CodeManager;
 import ict.util.IdManager;
 
 /**
@@ -231,7 +233,7 @@ public class ProjectDB {
             stmt.setString(2, user.getPassword());
             stmt.setInt(3, user.getRole());
             // Handle shop_id
-            if (user.getShopId() == null 
+            if (user.getShopId() == null
                     || user.getShopId().equalsIgnoreCase("null")
                     || user.getShopId().trim().isEmpty()) {
                 stmt.setNull(4, Types.VARCHAR);
@@ -360,7 +362,7 @@ public class ProjectDB {
             throw new RuntimeException("Failed to add fruit", ex);
         }
     }
-    
+
     public void addFruit(String cityId, String fruitName) {
         String fruitId = getNextFruitId();
         addFruit(fruitId, cityId, fruitName);
@@ -998,10 +1000,10 @@ public class ProjectDB {
             String query = "SELECT * FROM borrow";
             ResultSet rs = executeQuery(query);
             ArrayList<BorrowBean> borrows = new ArrayList<>();
-            
+
             // Debug: Print SQL query being executed
             System.out.println("Executing query: " + query);
-            
+
             int count = 0;
             while (rs.next()) {
                 count++;
@@ -1013,13 +1015,13 @@ public class ProjectDB {
                 borrow.setQuantity(rs.getInt("quantity"));
                 borrow.setStatus(rs.getInt("status"));
                 borrow.setDate(rs.getString("date"));
-                
+
                 // Debug: Print each borrow record
                 System.out.println("Found borrow record: " + borrow);
-                
+
                 borrows.add(borrow);
             }
-            
+
             System.out.println("Total borrow records found in database: " + count);
             return borrows;
         } catch (SQLException e) {
@@ -1207,7 +1209,7 @@ public class ProjectDB {
         }
         return shops;
     }
-    
+
     // Get shops in the same city as the specified shop
     public ArrayList<ShopBean> getShopsInSameCity(String shopId) {
         ArrayList<ShopBean> shops = new ArrayList<>();
@@ -1217,17 +1219,17 @@ public class ProjectDB {
             PreparedStatement cityStmt = prepareStatement(cityQuery);
             cityStmt.setString(1, shopId);
             ResultSet cityRs = cityStmt.executeQuery();
-            
+
             if (cityRs.next()) {
                 String cityId = cityRs.getString("city_id");
-                
+
                 // Get all shops in the same city
                 String shopsQuery = "SELECT * FROM shop WHERE city_id = ? AND shop_id != ?";
                 PreparedStatement shopsStmt = prepareStatement(shopsQuery);
                 shopsStmt.setString(1, cityId);
                 shopsStmt.setString(2, shopId); // Exclude the current shop
                 ResultSet rs = shopsStmt.executeQuery();
-                
+
                 while (rs.next()) {
                     ShopBean shop = new ShopBean();
                     shop.setShopId(rs.getString("shop_id"));
@@ -1235,7 +1237,7 @@ public class ProjectDB {
                     shop.setCityId(rs.getString("city_id"));
                     shops.add(shop);
                 }
-                
+
                 System.out.println("Retrieved " + shops.size() + " shops in the same city (City ID: " + cityId + ")");
             } else {
                 System.out.println("Shop not found: " + shopId);
@@ -1246,7 +1248,7 @@ public class ProjectDB {
         }
         return shops;
     }
-    
+
     // Get the city ID of a shop
     public String getShopCityId(String shopId) {
         try {
@@ -1254,7 +1256,7 @@ public class ProjectDB {
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, shopId);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return rs.getString("city_id");
             }
@@ -1262,6 +1264,36 @@ public class ProjectDB {
         } catch (SQLException ex) {
             System.out.println("Error retrieving shop city ID: " + ex.getMessage());
             throw new RuntimeException("Failed to get shop city ID", ex);
+        }
+    }
+
+    public ArrayList<ConsumptionBean> listAllConsumption() {
+        try {
+            ArrayList<ConsumptionBean> consumptions = new ArrayList();
+            CodeManager cM = new CodeManager();
+            String query = "SELECT c.*, f.fruit_name, r.region_name "
+                    + "FROM consumption c "
+                    + "LEFT JOIN fruit f ON c.fruit_id = f.fruit_id "
+                    + "LEFT JOIN region r ON c.region_id = r.region_id ";
+            PreparedStatement stmt = prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                ConsumptionBean consumption = new ConsumptionBean();
+                consumption.setConsumptionId(rs.getString("consumption_id"));
+                consumption.setFruitId(rs.getString("fruit_name"));
+                consumption.setQuantity(rs.getInt("quantity"));
+                consumption.setRegionId(rs.getString("region_name"));
+                consumption.setSeason(cM.getSeason(rs.getInt("season")));
+
+                consumptions.add(consumption);
+            }
+            return consumptions;
+        } catch (SQLException ex) {
+            System.err.println("[ERROR] SQL Exception occurred:");
+            System.err.println("SQL State: " + ex.getSQLState());
+            System.err.println("Error Code: " + ex.getErrorCode());
+            System.err.println("Message: " + ex.getMessage());
+            throw new RuntimeException("Failed to list consumptions", ex);
         }
     }
 
