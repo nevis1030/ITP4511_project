@@ -10,7 +10,24 @@
         <!-- User Info -->
         <div class="mb-3">
             <p class="mb-1">Logged in as: ${sessionScope.user.username}</p>
-            <p class="mb-0">Role: ${sessionScope.user.role}</p>
+            <p class="mb-1">User ID: ${sessionScope.user.userId}</p>
+            <p class="mb-1">Shop ID: ${sessionScope.user.shopId}</p>
+            <p class="mb-1">Role: 
+                <select name="role" class="form-select" disabled="true">
+                    <option value="shopStaff" 
+                            ${sessionScope.user.role == 0 ? 'selected' : ''}>
+                        Shop Staff
+                    </option>
+                    <option value="warehouseStaff" 
+                            ${sessionScope.user.role == 1 ? 'selected' : ''}>
+                        Warehouse Staff
+                    </option>
+                    <option value="seniorManager" 
+                            ${sessionScope.user.role == 2 ? 'selected' : ''}>
+                        Senior Manager
+                    </option>
+                </select>
+            </p>
         </div>
 
         <nav class="nav flex-column">

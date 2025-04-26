@@ -18,8 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 
-@WebServlet(name = "AddFruitServlet", urlPatterns = {"/shop/add-fruit"})
-public class AddFruitServlet extends BaseServlet {
+@WebServlet(name = "ShopAddFruitServlet", urlPatterns = {"/shop/add-fruit"})
+public class ShopAddFruitServlet extends BaseServlet {
 
 
     @Override
