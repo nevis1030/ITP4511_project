@@ -1,8 +1,9 @@
 <%-- 
-    Document   : account_password
-    Created on : 26 Apr 2025, 2:26:47 pm
+    Document   : account_main
+    Created on : 26 Apr 2025, 2:26:23 pm
     Author     : local_user
 --%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.time.LocalDate" %>
 <%@page import="java.time.ZoneId" %>
@@ -42,29 +43,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Change Password</h5>
-                            <form action="warehouse_password_change" method="post">
-                                <%
-                                    if (request.getAttribute("error") != null && request.getAttribute("error") == "access_denied"){
-                                %>
-                                <div class="alert alert-danger">
-                                    Incorrect password
-                                </div>
-                                <%
-                                    }else if (request.getAttribute("error") != null && request.getAttribute("error") == "success"){
-                                %>
-                                <div class="alert alert-warning">
-                                    Password changed
-                                </div>   
-                                <%
-                                    }
-                                %>
-                                <input type="hidden" name="userId" value="${sessionScope.user.userId}">
-                                <input type="hidden" name="old_password" value="${sessionScope.user.password}">
-                                Old password: <input name="validate_password" required/><br><br>
-                                New password: <input name="new_password" required/><br><br>
-                                <input class="btn btn-primary" type="submit" value="submit">
-                            </form>
+                            <h5>Select tab to begin</h5>
                         </div>
                     </div>
                 </div>

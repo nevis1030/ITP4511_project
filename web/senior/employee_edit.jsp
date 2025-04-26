@@ -48,10 +48,10 @@
                             %>
                             <form action="employee_edit" method="post">
                                 <input type="hidden" name="userId" value="<%= user.getUserId()%>">
-                                <input type="hidden" name="password" value="<%= user.getPassword()%>">
                                 Name: <input type="text" name="displayName" value="<%= user.getDisplayName()%>"><br><br>
                                 User ID: <input type="text" name="" value="<%= user.getUserId()%>" disabled="true"><br><br>
                                 Account Name: <input type="text" name="username" value="<%= user.getUsername()%>"><br><br>
+                                Password: <input type="text" name="password" value="<%= user.getPassword()%>"><br><br>
                                 Role: 
                                 <select name="role" class="form-select">
                                     <option value="0" 

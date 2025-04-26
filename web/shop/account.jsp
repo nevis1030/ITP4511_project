@@ -19,54 +19,40 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Change Password</h5>
-                    <form action="account" method="post">
-                        <input type="hidden" name="action" value="change-password">
-                        <input type="hidden" name="userId" value="${sessionScope.user.userId}">
-                        
-                        <div class="mb-3">
-                            <label for="currentPassword" class="form-label">Current Password</label>
-                            <input type="password" class="form-control" id="currentPassword" 
-                                   name="currentPassword" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" 
-                                   name="newPassword" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" 
-                                   name="confirmPassword" required>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    <form action="shop_password_change" method="post">
+                        <p>Please contact you supervisor to change password</p>
                     </form>
                 </div>
             </div>
         </c:when>
-        
+
         <c:when test="${param.subtab == 'details'}">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Account Details</h5>
-                    <form action="account" method="post">
-                        <input type="hidden" name="action" value="update">
-                        
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" 
-                                   name="username" value="${sessionScope.user.username}" readonly>
-                        </div>
-                
-                        
-                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    <h5>Account Detail</h5>
+                    <form>
+                        User ID: <input type="text" name="userId" value="${sessionScope.user.userId}" disabled="true"><br><br>
+                        Name: <input type="text" name="displayName" value="${sessionScope.user.displayName}" disabled="true"><br><br>
+                        Role: 
+                        <select name="role" class="form-select" disabled="true">
+                            <option value="shopStaff" 
+                                    ${sessionScope.user.role == 0 ? 'selected' : ''}>
+                                Shop Staff
+                            </option>
+                            <option value="warehouseStaff" 
+                                    ${sessionScope.user.role == 1 ? 'selected' : ''}>
+                                Warehouse Staff
+                            </option>
+                            <option value="seniorManager" 
+                                    ${sessionScope.user.role == 2 ? 'selected' : ''}>
+                                Senior Manager
+                            </option>
+                        </select>
                     </form>
                 </div>
             </div>
         </c:when>
-        
+
         <c:otherwise>
             <p>Select a tab to begin</p>
         </c:otherwise>

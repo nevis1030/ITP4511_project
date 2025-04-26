@@ -1,8 +1,9 @@
 <%-- 
-    Document   : account_password
-    Created on : 26 Apr 2025, 2:26:47 pm
+    Document   : account_detail
+    Created on : 26 Apr 2025, 2:27:49 pm
     Author     : local_user
 --%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.time.LocalDate" %>
 <%@page import="java.time.ZoneId" %>
@@ -42,28 +43,25 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Change Password</h5>
-                            <form action="warehouse_password_change" method="post">
-                                <%
-                                    if (request.getAttribute("error") != null && request.getAttribute("error") == "access_denied"){
-                                %>
-                                <div class="alert alert-danger">
-                                    Incorrect password
-                                </div>
-                                <%
-                                    }else if (request.getAttribute("error") != null && request.getAttribute("error") == "success"){
-                                %>
-                                <div class="alert alert-warning">
-                                    Password changed
-                                </div>   
-                                <%
-                                    }
-                                %>
-                                <input type="hidden" name="userId" value="${sessionScope.user.userId}">
-                                <input type="hidden" name="old_password" value="${sessionScope.user.password}">
-                                Old password: <input name="validate_password" required/><br><br>
-                                New password: <input name="new_password" required/><br><br>
-                                <input class="btn btn-primary" type="submit" value="submit">
+                            <h5>Account Detail</h5>
+                            <form>
+                                User ID: <input type="text" name="userId" value="${sessionScope.user.userId}" disabled="true"><br><br>
+                                Name: <input type="text" name="displayName" value="${sessionScope.user.displayName}" disabled="true"><br><br>
+                                Role: 
+                                <select name="role" class="form-select" disabled="true">
+                                    <option value="shopStaff" 
+                                            ${sessionScope.user.role == 0 ? 'selected' : ''}>
+                                        Shop Staff
+                                    </option>
+                                    <option value="warehouseStaff" 
+                                            ${sessionScope.user.role == 1 ? 'selected' : ''}>
+                                        Warehouse Staff
+                                    </option>
+                                    <option value="seniorManager" 
+                                            ${sessionScope.user.role == 2 ? 'selected' : ''}>
+                                        Senior Manager
+                                    </option>
+                                </select>
                             </form>
                         </div>
                     </div>

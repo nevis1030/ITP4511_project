@@ -19,8 +19,8 @@ import java.util.logging.Logger;
  *
  * @author local_user
  */
-@WebServlet(name = "WarehouseAccountChangePwServlet", urlPatterns = {"/warehouse_password_change"})
-public class WarehouseAccountChangePwServlet extends HttpServlet {
+@WebServlet(name = "ShopAccountChangePwServlet", urlPatterns = {"/shop_password_change"})
+public class ShopAccountChangePwServlet extends HttpServlet {
 
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/itp4511_project?useSSL=false";
     private static final String DATABASE_USER = "root";
@@ -38,7 +38,7 @@ public class WarehouseAccountChangePwServlet extends HttpServlet {
         if (oldPassword.contentEquals(validate)) {
             msg = "success";
             req.setAttribute("error", msg);
-            req.getRequestDispatcher("warehouse_account_password").forward(req, resp);
+            req.getRequestDispatcher("account_password").forward(req, resp);
             try {
                 Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
                 PreparedStatement stmnt = connection.prepareStatement(sql);
@@ -50,19 +50,25 @@ public class WarehouseAccountChangePwServlet extends HttpServlet {
                 if (rowsUpdated > 0) {
                     msg = "success";
                     req.setAttribute("error", msg);
-                    req.getRequestDispatcher("warehouse_account_password").forward(req, resp);
+                    resp.sendRedirect(req.getContextPath());
+//                    resp.sendRedirect(req.getContextPath() + "shop_dashboard.jsp?tab=account&subtab=password");
+//                    req.getRequestDispatcher("shop_dashboard.jsp?tab=account&subtab=password").forward(req, resp);
                 } else {
                     msg = "access_denied";
                     req.setAttribute("error", msg);
-                    req.getRequestDispatcher("warehouse_account_password").forward(req, resp);
+                    resp.sendRedirect(req.getContextPath());
+//                    resp.sendRedirect(req.getContextPath() + "shop_dashboard.jsp?tab=account&subtab=password");
+//                    req.getRequestDispatcher("shop_dashboard.jsp?tab=account&subtab=password").forward(req, resp);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(WarehouseAccountChangePwServlet.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ShopAccountChangePwServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             msg = "access_denied";
             req.setAttribute("error", msg);
-            req.getRequestDispatcher("warehouse_account_password").forward(req, resp);
+            resp.sendRedirect(req.getContextPath());
+//            resp.sendRedirect(req.getContextPath() + "shop_dashboard.jsp?tab=account&subtab=password");
+//            req.getRequestDispatcher("shop_dashboard.jsp?tab=account&subtab=password ").forward(req, resp);
         }
     }
 

@@ -43,7 +43,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Change Password</h5>
-                            <form action="warehouse_password_change" method="post">
+                            <form action="shop_password_change" method="post">
                                 <%
                                     if (request.getAttribute("error") != null && request.getAttribute("error") == "access_denied"){
                                 %>
