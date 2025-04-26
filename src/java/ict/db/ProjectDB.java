@@ -14,6 +14,7 @@ import ict.bean.ReservationBean;
 import ict.bean.BorrowBean;
 import ict.bean.ShopBean;
 import ict.bean.CityBean;
+import ict.bean.ConsumptionBean;
 import ict.util.IdManager;
 
 /**
@@ -1199,6 +1200,30 @@ public class ProjectDB {
         } catch (SQLException ex) {
             System.out.println("Error retrieving shop city ID: " + ex.getMessage());
             throw new RuntimeException("Failed to get shop city ID", ex);
+        }
+    }
+    
+    public ArrayList<ConsumptionBean> listAllConsumption() {
+        try {
+            ArrayList<ConsumptionBean> consumptions = new ArrayList();
+            String query = "SELECT * FROM consumption";
+            PreparedStatement stmt = prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                ConsumptionBean consumption = new ConsumptionBean();
+                consumption.setConsumptionId(rs.getString("reservation_id"));
+                consumption.setShopId(rs.getString("shop_id"));
+                consumption.setFruitId(rs.getString("fruit_id"));
+                consumption.setQuantity(rs.getInt("quantity"));
+                consumption.setOrderDate(rs.getString("order_date"));
+                consumption.setEndDate(rs.getString("end_date"));
+                consumption.setStatus(rs.getInt("status"));
+                
+                consumptions.add(consumption);
+            }
+            return consumptions;
+        } catch (SQLException ex) {
+            throw new RuntimeException("Failed to list reservation", ex);
         }
     }
 

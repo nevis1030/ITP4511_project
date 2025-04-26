@@ -12,6 +12,6 @@
         <a class="nav-link" href="account_password">Change Password</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="account_detail">Change/View Details</a>
+        <a class="nav-link" href="account_detail">View Details</a>
     </li>
 </ul>
