@@ -20,18 +20,32 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">New Borrow Request</h5>
-                    <form action="borrow" method="post">
+                    
+                    <!-- Display error message if any -->
+                    <c:if test="${not empty param.error}">
+                        <div class="alert alert-danger" role="alert">
+                            ${param.error}
+                        </div>
+                    </c:if>
+                    
+                    <form action="${pageContext.request.contextPath}/shop/borrow" method="post">
                         <input type="hidden" name="action" value="create">
                         <input type="hidden" name="fromShopId" value="${sessionScope.shopId}">
                         
                         <div class="mb-3">
                             <label for="toShopId" class="form-label">To Shop</label>
-                            <input type="text" class="form-control" id="toShopId" name="toShopId" required>
+                            <select class="form-select" id="toShopId" name="toShopId" required>
+                                <option value="">-- Select Shop --</option>
+                                <c:forEach items="${shops}" var="shop">
+                                    <option value="${shop.shopId}">${shop.shopName}</option>
+                                </c:forEach>
+                            </select>
                         </div>
                         
                         <div class="mb-3">
                             <label for="fruitId" class="form-label">Select Fruit</label>
                             <select class="form-select" id="fruitId" name="fruitId" required>
+                                <option value="">-- Select Fruit --</option>
                                 <c:forEach items="${fruits}" var="fruit">
                                     <option value="${fruit.fruitId}">${fruit.fruitName}</option>
                                 </c:forEach>
@@ -53,6 +67,25 @@
             <!-- Borrow Records Table -->
             <div class="card">
                 <div class="card-body">
+                    <!-- Display success/error messages if any -->
+                    <c:if test="${not empty param.success}">
+                        <div class="alert alert-success" role="alert">
+                            ${param.success}
+                        </div>
+                    </c:if>
+                    <c:if test="${not empty param.error}">
+                        <div class="alert alert-danger" role="alert">
+                            ${param.error}
+                        </div>
+                    </c:if>
+                    
+                    <!-- Debug information -->
+                    <c:if test="${empty borrows}">
+                        <div class="alert alert-warning">
+                            No borrow records found.
+                        </div>
+                    </c:if>
+                    
                     <table class="table">
                         <thead>
                             <tr>
@@ -63,14 +96,15 @@
                                 <th>Quantity</th>
                                 <th>Status</th>
                                 <th>Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${borrows}" var="borrow">
                                 <tr>
                                     <td>${borrow.borrowId}</td>
-                                    <td>${borrow.fromShop}</td>
-                                    <td>${borrow.toShop}</td>
+                                    <td>${shopNames[borrow.fromShop]}</td>
+                                    <td>${shopNames[borrow.toShop]}</td>
                                     <td>
                                         <c:forEach items="${fruits}" var="fruit">
                                             <c:if test="${fruit.fruitId == borrow.fruitId}">
@@ -79,8 +113,40 @@
                                         </c:forEach>
                                     </td>
                                     <td>${borrow.quantity}</td>
-                                    <td>${borrow.status}</td>
-                                    <td><fmt:formatDate value="${borrow.date}" pattern="yyyy-MM-dd"/></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${borrow.status == 0}">
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            </c:when>
+                                            <c:when test="${borrow.status == 1}">
+                                                <span class="badge bg-success">Approved</span>
+                                            </c:when>
+                                            <c:when test="${borrow.status == 2}">
+                                                <span class="badge bg-danger">Denied</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge bg-secondary">Unknown</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>${borrow.date}</td>
+                                    <td>
+                                        <!-- Only show approve/deny buttons if: 
+                                             1. The request status is pending (0)
+                                             2. The current user's shop is the destination shop -->
+                                        <c:if test="${borrow.status == 0 && borrow.toShop == sessionScope.shopId}">
+                                            <form action="${pageContext.request.contextPath}/shop/borrow/edit" method="post" style="display: inline;">
+                                                <input type="hidden" name="borrowId" value="${borrow.borrowId}">
+                                                <input type="hidden" name="action" value="approve">
+                                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                            </form>
+                                            <form action="${pageContext.request.contextPath}/shop/borrow/edit" method="post" style="display: inline;">
+                                                <input type="hidden" name="borrowId" value="${borrow.borrowId}">
+                                                <input type="hidden" name="action" value="deny">
+                                                <button type="submit" class="btn btn-sm btn-danger">Deny</button>
+                                            </form>
+                                        </c:if>
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>

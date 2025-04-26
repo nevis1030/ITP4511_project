@@ -10,6 +10,7 @@
                     <th>Stock ID</th>
                     <th>Fruit ID</th>
                     <th>Fruit Name</th>
+                    <th>Source City</th>
                     <th>Quantity</th>
                     <th>Actions</th>
                 </tr>
@@ -23,6 +24,17 @@
                             <c:forEach var="fruit" items="${fruits}">
                                 <c:if test="${fruit.fruitId == stock.fruitId}">
                                     ${fruit.fruitName}
+                                </c:if>
+                            </c:forEach>
+                        </td>
+                        <td>
+                            <c:forEach var="fruit" items="${fruits}">
+                                <c:if test="${fruit.fruitId == stock.fruitId}">
+                                    <c:forEach var="city" items="${cities}">
+                                        <c:if test="${city.cityId == fruit.sourceCityId}">
+                                            ${city.cityName}
+                                        </c:if>
+                                    </c:forEach>
                                 </c:if>
                             </c:forEach>
                         </td>
@@ -65,6 +77,12 @@
                                                            disabled>
                                                 </div>
                                                 <div class="mb-3">
+                                                    <label class="form-label">Source City:</label>
+                                                    <input type="text" class="form-control" 
+                                                           value="<c:forEach var="fruit" items="${fruits}"><c:if test="${fruit.fruitId == stock.fruitId}"><c:forEach var="city" items="${cities}"><c:if test="${city.cityId == fruit.sourceCityId}">${city.cityName}</c:if></c:forEach></c:if></c:forEach>" 
+                                                           disabled>
+                                                </div>
+                                                <div class="mb-3">
                                                     <label for="quantity" class="form-label">Quantity:</label>
                                                     <input type="number" class="form-control" id="quantity" name="quantity" 
                                                            value="${stock.quantity}" required min="0">
@@ -72,7 +90,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                <button type="submit" class="btn btn-primary">Save changes</button>
                                             </div>
                                         </form>
                                     </div>

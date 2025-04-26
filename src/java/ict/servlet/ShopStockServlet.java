@@ -4,6 +4,7 @@
  */
 package ict.servlet;
 
+import ict.bean.CityBean;
 import ict.bean.FruitBean;
 import ict.bean.StockLevelBean;
 import ict.bean.UserBean;
@@ -55,9 +56,13 @@ public class ShopStockServlet extends BaseServlet {
         // Get all fruits for reference (to display fruit names)
         ArrayList<FruitBean> fruits = db.listAllFruits();
         
+        // Get all cities for reference (to display source city names)
+        ArrayList<CityBean> cities = db.listAllCities();
+        
         // Set the data as request attributes
         request.setAttribute("stocks", stocks);
         request.setAttribute("fruits", fruits);
+        request.setAttribute("cities", cities);
         
         // Check if there's a tab parameter in the URL, preserve it when forwarding
         String tab = request.getParameter("tab");

@@ -12,6 +12,8 @@ import ict.bean.FruitBean;
 import ict.bean.StockLevelBean;
 import ict.bean.ReservationBean;
 import ict.bean.BorrowBean;
+import ict.bean.ShopBean;
+import ict.bean.CityBean;
 import ict.util.IdManager;
 
 /**
@@ -913,7 +915,13 @@ public class ProjectDB {
             String query = "SELECT * FROM borrow";
             ResultSet rs = executeQuery(query);
             ArrayList<BorrowBean> borrows = new ArrayList<>();
+            
+            // Debug: Print SQL query being executed
+            System.out.println("Executing query: " + query);
+            
+            int count = 0;
             while (rs.next()) {
+                count++;
                 BorrowBean borrow = new BorrowBean();
                 borrow.setBorrowId(rs.getString("borrow_id"));
                 borrow.setFromShop(rs.getString("from_shop"));
@@ -922,10 +930,18 @@ public class ProjectDB {
                 borrow.setQuantity(rs.getInt("quantity"));
                 borrow.setStatus(rs.getInt("status"));
                 borrow.setDate(rs.getString("date"));
+                
+                // Debug: Print each borrow record
+                System.out.println("Found borrow record: " + borrow);
+                
                 borrows.add(borrow);
             }
+            
+            System.out.println("Total borrow records found in database: " + count);
             return borrows;
         } catch (SQLException e) {
+            System.out.println("Error in listAllBorrow: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Failed to get borrow requests", e);
         }
     }
@@ -1061,6 +1077,103 @@ public class ProjectDB {
             System.out.println("Stock check-out to local shop processed successfully");
         } catch (SQLException e) {
             throw new RuntimeException("Failed to process check-out to local: " + e.getMessage(), e);
+        }
+    }
+
+    // City methods
+    public ArrayList<CityBean> listAllCities() {
+        ArrayList<CityBean> cities = new ArrayList<>();
+        try {
+            ResultSet rs = executeQuery("SELECT * FROM city");
+            while (rs.next()) {
+                CityBean city = new CityBean();
+                city.setCityId(rs.getString("city_id"));
+                city.setCityName(rs.getString("city_name"));
+                city.setRegionId(rs.getString("region_id"));
+                cities.add(city);
+            }
+            System.out.println("Retrieved " + cities.size() + " cities from database");
+        } catch (SQLException ex) {
+            System.out.println("Error retrieving cities: " + ex.getMessage());
+            throw new RuntimeException("Failed to list cities", ex);
+        }
+        return cities;
+    }
+
+    // Shop methods
+    public ArrayList<ShopBean> listAllShops() {
+        ArrayList<ShopBean> shops = new ArrayList<>();
+        try {
+            ResultSet rs = executeQuery("SELECT * FROM shop");
+            while (rs.next()) {
+                ShopBean shop = new ShopBean();
+                shop.setShopId(rs.getString("shop_id"));
+                shop.setShopName(rs.getString("shop_name"));
+                shop.setCityId(rs.getString("city_id"));
+                shops.add(shop);
+            }
+            System.out.println("Retrieved " + shops.size() + " shops from database");
+        } catch (SQLException ex) {
+            System.out.println("Error retrieving shops: " + ex.getMessage());
+            throw new RuntimeException("Failed to list shops", ex);
+        }
+        return shops;
+    }
+    
+    // Get shops in the same city as the specified shop
+    public ArrayList<ShopBean> getShopsInSameCity(String shopId) {
+        ArrayList<ShopBean> shops = new ArrayList<>();
+        try {
+            // First, get the city of the specified shop
+            String cityQuery = "SELECT city_id FROM shop WHERE shop_id = ?";
+            PreparedStatement cityStmt = prepareStatement(cityQuery);
+            cityStmt.setString(1, shopId);
+            ResultSet cityRs = cityStmt.executeQuery();
+            
+            if (cityRs.next()) {
+                String cityId = cityRs.getString("city_id");
+                
+                // Get all shops in the same city
+                String shopsQuery = "SELECT * FROM shop WHERE city_id = ? AND shop_id != ?";
+                PreparedStatement shopsStmt = prepareStatement(shopsQuery);
+                shopsStmt.setString(1, cityId);
+                shopsStmt.setString(2, shopId); // Exclude the current shop
+                ResultSet rs = shopsStmt.executeQuery();
+                
+                while (rs.next()) {
+                    ShopBean shop = new ShopBean();
+                    shop.setShopId(rs.getString("shop_id"));
+                    shop.setShopName(rs.getString("shop_name"));
+                    shop.setCityId(rs.getString("city_id"));
+                    shops.add(shop);
+                }
+                
+                System.out.println("Retrieved " + shops.size() + " shops in the same city (City ID: " + cityId + ")");
+            } else {
+                System.out.println("Shop not found: " + shopId);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error retrieving shops in same city: " + ex.getMessage());
+            throw new RuntimeException("Failed to list shops in same city", ex);
+        }
+        return shops;
+    }
+    
+    // Get the city ID of a shop
+    public String getShopCityId(String shopId) {
+        try {
+            String query = "SELECT city_id FROM shop WHERE shop_id = ?";
+            PreparedStatement stmt = prepareStatement(query);
+            stmt.setString(1, shopId);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getString("city_id");
+            }
+            return null;
+        } catch (SQLException ex) {
+            System.out.println("Error retrieving shop city ID: " + ex.getMessage());
+            throw new RuntimeException("Failed to get shop city ID", ex);
         }
     }
 

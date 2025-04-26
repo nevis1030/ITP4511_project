@@ -17,9 +17,9 @@
             <!-- Shop Staff Menu -->
             <c:if test="${sessionScope.shopId != null}">
                 <a class="nav-link ${param.tab == 'reserving' ? 'active' : ''}" 
-                   href="${pageContext.request.contextPath}/shop_dashboard.jsp?tab=reserving">Reserving Fruit</a>
+                   href="${pageContext.request.contextPath}/shop/reserve">Reserving Fruit</a>
                 <a class="nav-link ${param.tab == 'borrowing' ? 'active' : ''}" 
-                   href="${pageContext.request.contextPath}/shop_dashboard.jsp?tab=borrowing">Borrowing Fruit</a>
+                   href="${pageContext.request.contextPath}/shop/borrow">Borrowing Fruit</a>
                 <a class="nav-link ${param.tab == 'stock' ? 'active' : ''}" 
                    href="${pageContext.request.contextPath}/shop/stock">Stock Level</a>
                 <a class="nav-link ${param.tab == 'account' ? 'active' : ''}" 
