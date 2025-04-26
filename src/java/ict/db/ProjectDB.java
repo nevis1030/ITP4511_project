@@ -642,18 +642,65 @@ public class ProjectDB {
         }
     }
 
-    public void approveReservation(String reservationId, int status) {
-        if (status < 0 || status > 2) {
-            throw new IllegalArgumentException("Status must be between 0 and 2");
-        }
+    public void approveReservation(String reservationId) {
         try {
-            String query = "UPDATE reservation SET status = ? WHERE reservation_id = ?";
+            // First get the reservation details
+            String query = "SELECT shop_id, fruit_id, quantity FROM reservation WHERE reservation_id = ?";
             PreparedStatement stmt = prepareStatement(query);
-            stmt.setInt(1, status);
-            stmt.setString(2, reservationId);
-            stmt.executeUpdate();
+            stmt.setString(1, reservationId);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                String shopId = rs.getString("shop_id");
+                String fruitId = rs.getString("fruit_id");
+                int quantity = rs.getInt("quantity");
+                
+                // Update stock level
+                String updateQuery = "UPDATE stocklevel "
+                        + "SET quantity = quantity + ? "
+                        + "WHERE shop_id = ? AND fruit_id = ?";
+                PreparedStatement updateStmt = prepareStatement(updateQuery);
+                updateStmt.setInt(1, quantity);
+                updateStmt.setString(2, shopId);
+                updateStmt.setString(3, fruitId);
+                updateStmt.executeUpdate();
+                
+                // Update reservation status to approved (1)
+                query = "UPDATE reservation SET status = 1 WHERE reservation_id = ?";
+                stmt = prepareStatement(query);
+                stmt.setString(1, reservationId);
+                stmt.executeUpdate();
+                
+                System.out.println("Reservation approved successfully: " + reservationId);
+            } else {
+                throw new RuntimeException("Reservation not found: " + reservationId);
+            }
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to approve reservation", ex);
+        }
+    }
+
+    public void denyReservation(String reservationId) {
+        try {
+            // Get reservation details
+            String query = "SELECT shop_id, fruit_id, quantity FROM reservation WHERE reservation_id = ?";
+            PreparedStatement stmt = prepareStatement(query);
+            stmt.setString(1, reservationId);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                // Update reservation status to denied (2)
+                query = "UPDATE reservation SET status = 2 WHERE reservation_id = ?";
+                stmt = prepareStatement(query);
+                stmt.setString(1, reservationId);
+                stmt.executeUpdate();
+                
+                System.out.println("Reservation denied successfully: " + reservationId);
+            } else {
+                throw new RuntimeException("Reservation not found: " + reservationId);
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Failed to deny reservation", ex);
         }
     }
 
@@ -858,6 +905,8 @@ public class ProjectDB {
     // Borrow methods
     public void createBorrowRequest(String fromShopId, String toShopId, String fruitId, int quantity) {
         try {
+            // fromShopId = target shop providing the fruit
+            // toShopId = requesting shop that wants the fruit
             checkSameCity(fromShopId, toShopId);
             checkStockAvailability(fromShopId, fruitId, quantity);
 
@@ -869,14 +918,14 @@ public class ProjectDB {
                     + "VALUES (?, ?, ?, ?, ?, 0, CURRENT_DATE())";
             PreparedStatement insertStmt = prepareStatement(insertQuery);
             insertStmt.setString(1, borrowId);
-            insertStmt.setString(2, fromShopId);
-            insertStmt.setString(3, toShopId);
+            insertStmt.setString(2, fromShopId); // from_shop = target shop providing the fruit
+            insertStmt.setString(3, toShopId);   // to_shop = requesting shop
             insertStmt.setString(4, fruitId);
             insertStmt.setInt(5, quantity);
             insertStmt.executeUpdate();
 
-            // Update stock level
-            updateStockLevel(fromShopId, fruitId, quantity);
+            // We don't need to update stock level at request creation time
+            // Stock will be updated only when the request is approved
 
             System.out.println("Borrow request created successfully: " + borrowId);
 
@@ -886,15 +935,36 @@ public class ProjectDB {
     }
 
     public void approveBorrow(String borrowId) {
-
         try {
-            String query = "UPDATE borrow SET status = 1 WHERE borrow_id = ?";
+            String query = "SELECT from_shop, to_shop, fruit_id, quantity FROM borrow WHERE borrow_id = ?";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, borrowId);
-            stmt.executeUpdate();
-            System.out.println("Borrow request status updated successfully");
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                String fromShopId = rs.getString("from_shop"); // target shop providing the fruit
+                String toShopId = rs.getString("to_shop");     // requesting shop
+                String fruitId = rs.getString("fruit_id");
+                int quantity = rs.getInt("quantity");
+                
+                // Update stock levels
+                // Decrease in from shop (target) since they're providing the fruit
+                updateStockLevel(fromShopId, fruitId, -quantity);
+                // Increase in to shop (requesting) since they're receiving the fruit
+                updateStockLevel(toShopId, fruitId, quantity);
+                
+                // Update borrow status
+                query = "UPDATE borrow SET status = 1 WHERE borrow_id = ?";
+                stmt = prepareStatement(query);
+                stmt.setString(1, borrowId);
+                stmt.executeUpdate();
+                
+                System.out.println("Borrow request approved successfully: " + borrowId);
+            } else {
+                throw new RuntimeException("Borrow request not found: " + borrowId);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update borrow status", e);
+            throw new RuntimeException("Failed to approve borrow request", e);
         }
     }
 
@@ -907,20 +977,13 @@ public class ProjectDB {
             ResultSet rs = selectStmt.executeQuery();
 
             if (rs.next()) {
-                String fromShopId = rs.getString("from_shop");
-                String fruitId = rs.getString("fruit_id");
-                int quantity = rs.getInt("quantity");
-
-                // Rollback stock level
-                updateStockLevel(fromShopId, fruitId, -quantity);
-
                 // Update borrow status to denied (status = 2)
                 String updateQuery = "UPDATE borrow SET status = 2 WHERE borrow_id = ?";
                 PreparedStatement updateStmt = prepareStatement(updateQuery);
                 updateStmt.setString(1, borrowId);
                 updateStmt.executeUpdate();
 
-                System.out.println("Borrow request denied and stock levels rolled back successfully");
+                System.out.println("Borrow request denied successfully: " + borrowId);
             } else {
                 throw new RuntimeException("Borrow request not found: " + borrowId);
             }

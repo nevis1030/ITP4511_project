@@ -24,8 +24,8 @@ import jakarta.servlet.http.HttpSession;
  * 
  * @author local_user
  */
-@WebServlet(name = "BorrowServlet", urlPatterns = {"/shop/borrow"})
-public class BorrowServlet extends BaseServlet {
+@WebServlet(name = "ShopBorrowServlet", urlPatterns = {"/shop/borrow"})
+public class ShopBorrowServlet extends BaseServlet {
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -126,7 +126,7 @@ public class BorrowServlet extends BaseServlet {
             int quantity = Integer.parseInt(request.getParameter("quantity"));
             
             // Security check - ensure user is only creating requests from their own shop
-            if (!userShopId.equals(fromShopId)) {
+            if (!userShopId.equals(toShopId)) {
                 // Redirect with error message if trying to create a request from another shop
                 response.sendRedirect(request.getContextPath() + "/shop/borrow?subtab=borrow-request&error=Unauthorized: You can only create requests from your own shop");
                 return;

@@ -51,8 +51,8 @@ public class TestReservation {
                 ArrayList<ReservationBean> reservations = db.getReservationByShop(shopId);
                 if (reservations != null && !reservations.isEmpty()) {
                     ReservationBean reservation = reservations.get(reservations.size() - 1);
-                    db.approveReservation(reservation.getReservationId(), 1); // 1 = approved
-                    System.out.println("Reservation approved successfully");
+//                    db.approveReservation(reservation.getReservationId(), 1); // 1 = approved
+//                    System.out.println("Reservation approved successfully");
                     
                     // Verify approval
                     ReservationBean updated = db.listAllReservation(reservation.getReservationId());
