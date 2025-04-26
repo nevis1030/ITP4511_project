@@ -15,12 +15,12 @@ import java.io.IOException;
  *
  * @author local_user
  */
-@WebServlet(name="SeniorAccountServlet", urlPatterns={"/account"})
-public class SeniorAccountServlet extends HttpServlet{
+@WebServlet(name="WarehouseAccountServlet", urlPatterns={"/warehouse_account"})
+public class WarehouseAccountServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/senior/account_main.jsp").forward(req, resp);
+        req.getRequestDispatcher("/warehouse/account_main.jsp").forward(req, resp);
     }
     
 }

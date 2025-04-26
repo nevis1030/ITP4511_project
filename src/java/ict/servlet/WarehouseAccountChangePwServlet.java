@@ -19,8 +19,8 @@ import java.util.logging.Logger;
  *
  * @author local_user
  */
-@WebServlet(name = "SeniorAccountChangePwServlet", urlPatterns = {"/password_change"})
-public class SeniorAccountChangePwServlet extends HttpServlet {
+@WebServlet(name = "WarehouseAccountChangePwServlet", urlPatterns = {"/warehouse_password_change"})
+public class WarehouseAccountChangePwServlet extends HttpServlet {
 
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/itp4511_project?useSSL=false";
     private static final String DATABASE_USER = "root";
@@ -57,12 +57,12 @@ public class SeniorAccountChangePwServlet extends HttpServlet {
                     req.getRequestDispatcher("account_password").forward(req, resp);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(SeniorAccountChangePwServlet.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WarehouseAccountChangePwServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             msg = "access_denied";
             req.setAttribute("error", msg);
-            req.getRequestDispatcher("account_password").forward(req, resp);
+            req.getRequestDispatcher("warehouse_account_password").forward(req, resp);
         }
     }
 

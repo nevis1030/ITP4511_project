@@ -15,17 +15,17 @@ import java.io.IOException;
  *
  * @author local_user
  */
-@WebServlet(name="SeniorAccountPasswordServlet", urlPatterns={"/account_password"})
-public class SeniorAccountPasswordServlet extends HttpServlet{
+@WebServlet(name="WarehouseAccountPasswordServlet", urlPatterns={"/warehouse_account_password"})
+public class WarehouseAccountPasswordServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/senior/account_password.jsp").forward(req, resp);
+        req.getRequestDispatcher("/warehouse/account_password.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/senior/account_password.jsp").forward(req, resp);
+        req.getRequestDispatcher("/warehouse/account_password.jsp").forward(req, resp);
     }
     
     

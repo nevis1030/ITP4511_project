@@ -9,9 +9,9 @@
 <h3>Account Settings</h3>
 <ul class="nav nav-tabs mb-4">
     <li class="nav-item">
-        <a class="nav-link" href="account_password">Change Password</a>
+        <a class="nav-link" href="warehouse_account_password">Change Password</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="account_detail">View Details</a>
+        <a class="nav-link" href="warehouse_account_detail">View Details</a>
     </li>
 </ul>
