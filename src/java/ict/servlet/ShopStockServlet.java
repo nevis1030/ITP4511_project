@@ -18,23 +18,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet to handle shop stock data display
- * 
- * @author local_user
- */
 @WebServlet(name = "ShopStockServlet", urlPatterns = {"/shop/stock"})
 public class ShopStockServlet extends BaseServlet {
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     * Retrieves shop stock data and forwards to stock.jsp for display
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

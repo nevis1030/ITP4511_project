@@ -16,23 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet to handle approving/denying borrow requests
- * 
- * @author local_user
- */
+
 @WebServlet(name = "BorrowEditServlet", urlPatterns = {"/shop/borrow/edit"})
 public class BorrowEditServlet extends BaseServlet {
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * Updates borrow status based on form submission
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -44,7 +31,6 @@ public class BorrowEditServlet extends BaseServlet {
         UserBean user = (UserBean) session.getAttribute("user");
         String userShopId = user.getShopId();
         
-        // Get form parameters
         String borrowId = request.getParameter("borrowId");
         String action = request.getParameter("action");
         

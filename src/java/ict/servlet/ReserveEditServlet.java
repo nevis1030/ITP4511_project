@@ -23,15 +23,6 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "ReserveEditServlet", urlPatterns = {"/shop/reserve/edit"})
 public class ReserveEditServlet extends BaseServlet {
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * Updates reservation status based on form submission
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

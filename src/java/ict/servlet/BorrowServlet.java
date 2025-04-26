@@ -105,27 +105,17 @@ public class BorrowServlet extends BaseServlet {
         rd.forward(request, response);
     }
     
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * Creates a new borrow request based on form submission
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // Use BaseServlet's helper method to check if user is logged in and is a shop staff
         checkShopStaff(request, response);
         
         HttpSession session = request.getSession(false);
         UserBean user = (UserBean) session.getAttribute("user");
         String userShopId = user.getShopId();
         
-        // Get form parameters
         String action = request.getParameter("action");
         
         if ("create".equals(action)) {

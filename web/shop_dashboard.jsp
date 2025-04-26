@@ -74,6 +74,9 @@
                     <c:if test="${param.tab == 'account'}">
                         <%@include file="shop/account.jsp"%>
                     </c:if>
+                    <c:if test="${param.tab == 'add-fruit'}">
+                        <%@include file="shop/add-fruit.jsp"%>
+                    </c:if>
                 </div>
             </div>
         </div>

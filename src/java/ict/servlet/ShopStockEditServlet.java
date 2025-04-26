@@ -14,28 +14,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet to handle editing stock quantity
- * 
- * @author local_user
- */
+
 @WebServlet(name = "ShopStockEditServlet", urlPatterns = {"/shop/stock/edit"})
 public class ShopStockEditServlet extends BaseServlet {
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * Updates stock quantity based on form submission
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // Use BaseServlet's helper method to check if user is logged in and is a shop staff
         checkShopStaff(request, response);
         
         HttpSession session = request.getSession(false);
