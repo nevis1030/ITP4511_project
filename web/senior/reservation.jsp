@@ -8,7 +8,7 @@
 <%@page import="java.time.ZoneId" %>
 <%@page import="java.util.Date" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="ict.bean.ConsumptionBean"%>
+<%@page import="ict.bean.ReserveRecordBean"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -47,13 +47,33 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Region</th>
-                                        <th>Season</th>
-                                        <th>Fruit</th>
+                                        <th>ID</th>
+                                        <th>Shop ID</th>
+                                        <th>Shop Name</th>
+                                        <th>Fruit ID</th>
+                                        <th>Fruit Name</th>
                                         <th>Quantity</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <%
+                                        ArrayList<ReserveRecordBean> list = (ArrayList<ReserveRecordBean>)request.getAttribute("list");
+                                        if(list != null) {
+                                            for(ReserveRecordBean item : list){
+                                                pageContext.setAttribute("item", item);
+                                    %>
+                                    <tr>
+                                        <td><%= item.getReservation_id()%></td>
+                                        <td><%= item.getShop_id()%></td>
+                                        <td><%= item.getShop_name()%></td>
+                                        <td><%= item.getFruit_id()%></td>
+                                        <td><%= item.getFruit_name()%></td>
+                                        <td><%= item.getQuantity()%></td>
+                                    </tr>
+                                    <%
+                                            }
+                                        }
+                                    %>
                                     <!-- Add dynamic data here -->
                                 </tbody>
                             </table>
