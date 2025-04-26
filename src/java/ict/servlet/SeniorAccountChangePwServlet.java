@@ -6,8 +6,6 @@ package ict.servlet;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
-import ict.bean.UserBean;
-import ict.db.ProjectDB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +22,6 @@ import java.util.logging.Logger;
 @WebServlet(name = "SeniorAccountChangePwServlet", urlPatterns = {"/password_change"})
 public class SeniorAccountChangePwServlet extends HttpServlet {
 
-    ProjectDB db = ProjectDB.getInstance();
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/itp4511_project?useSSL=false";
     private static final String DATABASE_USER = "root";
     private static final String DATABASE_PASSWORD = "";
@@ -35,14 +32,6 @@ public class SeniorAccountChangePwServlet extends HttpServlet {
         String oldPassword = req.getParameter("old_password");
         String validate = req.getParameter("validate_password");
         String newPassword = req.getParameter("new_password");
-        System.out.println("[DEBUG] parameter userId = " + req.getParameter("userId"));
-        System.out.println("[DEBUG] parameter old password = " + req.getParameter("old_password"));
-        System.out.println("[DEBUG] parameter validate = " + req.getParameter("validate_password"));
-        System.out.println("[DEBUG] parameter new password = " + req.getParameter("new_password"));
-        System.out.println("[DEBUG] userId = " + userId);
-        System.out.println("[DEBUG] old password = " + oldPassword);
-        System.out.println("[DEBUG] validate = " + validate);
-        System.out.println("[DEBUG] new password = " + newPassword);
         String msg;
 
         String sql = "UPDATE user SET password = ? WHERE user_id = ?";
