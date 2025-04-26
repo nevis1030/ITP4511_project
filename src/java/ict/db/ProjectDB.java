@@ -19,7 +19,7 @@ import ict.util.IdManager;
  * @author Nevis
  */
 public class ProjectDB {
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/itp4511_project";
+    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/itp4511_project?useSSL=false";
     private static final String DATABASE_USER = "root";
     private static final String DATABASE_PASSWORD = "";
     
@@ -295,6 +295,7 @@ public class ProjectDB {
                     user = new UserBean();
                     user.setUserId(rs.getString("user_id"));
                     user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
                     user.setRole(rs.getInt("role"));
                     user.setShopId(rs.getString("shop_id"));
                     user.setWarehouseId(rs.getString("warehouse_id"));

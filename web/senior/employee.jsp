@@ -1,6 +1,6 @@
 <%-- 
-    Document   : shop_dashboard
-    Created on : 23 Apr 2025, 1:42:51 pm
+    Document   : employee
+    Created on : 26 Apr 2025, 2:25:18 pm
     Author     : local_user
 --%>
 <%@page import="java.time.LocalDate" %>
@@ -38,14 +38,30 @@
 
                 <!-- Main Content -->
                 <div class="col-md-9 col-lg-10 p-4">
+                    <h3>Employee</h3>
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Select function to start</h5>
+                            <h5 class="card-title">Employee List</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Region</th>
+                                        <th>Location</th>
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
+

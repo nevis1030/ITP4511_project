@@ -26,7 +26,7 @@ public class LoginServlet extends HttpServlet {
                 if (user != null) {
                     HttpSession session = request.getSession();
                     session.setAttribute("user", user);
-                    
+                       
                     // Set role-specific attributes
                     switch (user.getRole()) {
                         case 0: // Shop Staff
@@ -56,8 +56,7 @@ public class LoginServlet extends HttpServlet {
                 request.setAttribute("error", "Login error: " + e.getMessage());
             }
         }
-        
-        request.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
     @Override

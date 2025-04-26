@@ -1,12 +1,13 @@
 <%-- 
-    Document   : shop_dashboard
-    Created on : 23 Apr 2025, 1:42:51 pm
+    Document   : account_main
+    Created on : 26 Apr 2025, 2:26:23 pm
     Author     : local_user
 --%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.time.LocalDate" %>
 <%@page import="java.time.ZoneId" %>
 <%@page import="java.util.Date" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="pageTitle" value="Management" scope="request"/>
@@ -14,7 +15,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <%@include file="WEB-INF/module/title.jsp"%>
+        <%@include file="title.jsp"%>
         <style>
             .sidebar {
                 height: 100vh;
@@ -33,14 +34,16 @@
             <div class="row">
                 <!-- Sidebar -->
                 <div class="col-md-3 col-lg-2 sidebar">
-                    <%@include file="senior/sidebar.jsp"%>
+                    <%@include file="sidebar.jsp"%>
                 </div>
 
                 <!-- Main Content -->
                 <div class="col-md-9 col-lg-10 p-4">
+                    <%@include file="account_tab.jsp"%>
+
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Select function to start</h5>
+                            <h5>Select tab to begin</h5>
                         </div>
                     </div>
                 </div>
