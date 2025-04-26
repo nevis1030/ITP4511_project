@@ -21,13 +21,14 @@ import ict.util.IdManager;
  * @author Nevis
  */
 public class ProjectDB {
+
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/itp4511_project?useSSL=false";
     private static final String DATABASE_USER = "root";
     private static final String DATABASE_PASSWORD = "";
-    
+
     private static final String USER_ID_PREFIX = "u";
     private static final String FRUIT_ID_PREFIX = "f";
-    
+
     private static Connection connection = null;
     private static ProjectDB instance = null;
 
@@ -51,11 +52,11 @@ public class ProjectDB {
     private PreparedStatement prepareStatement(String query) throws SQLException {
         return connection.prepareStatement(query);
     }
-    
+
     private ResultSet executeQuery(String query) throws SQLException {
         return prepareStatement(query).executeQuery();
     }
-    
+
     private int executeUpdate(String query) throws SQLException {
         return prepareStatement(query).executeUpdate();
     }
@@ -229,13 +230,32 @@ public class ProjectDB {
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
             stmt.setInt(3, user.getRole());
-            stmt.setString(4, user.getShopId());
-            stmt.setString(5, user.getWarehouseId());
+            // Handle shop_id
+            if (user.getShopId() == null 
+                    || user.getShopId().equalsIgnoreCase("null")
+                    || user.getShopId().trim().isEmpty()) {
+                stmt.setNull(4, Types.VARCHAR);
+            } else {
+                stmt.setString(4, user.getShopId());
+            }
+
+            // Handle warehouse_id - PROPER NULL HANDLING
+            if (user.getWarehouseId() == null
+                    || user.getWarehouseId().equalsIgnoreCase("null")
+                    || user.getWarehouseId().trim().isEmpty()) {
+                stmt.setNull(5, Types.VARCHAR); // Sets true database NULL
+            } else {
+                stmt.setString(5, user.getWarehouseId());
+            }
             stmt.setString(6, user.getDisplayName());
             stmt.setString(7, user.getUserId());
+//            System.out.println(stmt.toString());
             stmt.executeUpdate();
         } catch (SQLException ex) {
-            throw new RuntimeException("Failed to update user", ex);
+            System.err.println("SQL State: " + ex.getSQLState());
+            System.err.println("Error Code: " + ex.getErrorCode());
+            System.err.println("Message: " + ex.getMessage());
+            throw new RuntimeException("Failed to update user: " + ex.getMessage(), ex);
         }
     }
 
@@ -287,11 +307,11 @@ public class ProjectDB {
     public UserBean login(String username, String password) {
         UserBean user = null;
         String query = "SELECT * FROM user WHERE username = ? AND password = ?";
-        
+
         try (PreparedStatement stmt = prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     user = new UserBean();
@@ -307,7 +327,7 @@ public class ProjectDB {
         } catch (SQLException e) {
             throw new RuntimeException("Login error: " + e.getMessage(), e);
         }
-        
+
         return user;
     }
 
@@ -452,9 +472,9 @@ public class ProjectDB {
         ArrayList<StockLevelBean> stocks = new ArrayList<>();
         try {
             String query = "SELECT sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id, SUM(sl.quantity) as total_quantity "
-                       + "FROM stocklevel sl "
-                       + "WHERE sl.shop_id = ? "
-                       + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
+                    + "FROM stocklevel sl "
+                    + "WHERE sl.shop_id = ? "
+                    + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, shopId);
             ResultSet rs = stmt.executeQuery();
@@ -477,10 +497,10 @@ public class ProjectDB {
         ArrayList<StockLevelBean> stocks = new ArrayList<>();
         try {
             String query = "SELECT sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id, SUM(sl.quantity) as total_quantity "
-                       + "FROM stocklevel sl "
-                       + "JOIN shop s ON sl.shop_id = s.shop_id "
-                       + "WHERE s.city_id = ? "
-                       + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
+                    + "FROM stocklevel sl "
+                    + "JOIN shop s ON sl.shop_id = s.shop_id "
+                    + "WHERE s.city_id = ? "
+                    + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, cityId);
             ResultSet rs = stmt.executeQuery();
@@ -503,11 +523,11 @@ public class ProjectDB {
         ArrayList<StockLevelBean> stocks = new ArrayList<>();
         try {
             String query = "SELECT sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id, SUM(sl.quantity) as total_quantity "
-                       + "FROM stocklevel sl "
-                       + "JOIN shop s ON sl.shop_id = s.shop_id "
-                       + "JOIN city c ON s.city_id = c.city_id "
-                       + "WHERE c.region_id = ? "
-                       + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
+                    + "FROM stocklevel sl "
+                    + "JOIN shop s ON sl.shop_id = s.shop_id "
+                    + "JOIN city c ON s.city_id = c.city_id "
+                    + "WHERE c.region_id = ? "
+                    + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, regionId);
             ResultSet rs = stmt.executeQuery();
@@ -529,16 +549,16 @@ public class ProjectDB {
     public StockLevelBean getStockByShopAndFruit(String shopId, String fruitId) {
         try {
             String query = "SELECT sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id, sl.quantity, f.fruit_name "
-                       + "FROM stocklevel sl "
-                       + "JOIN fruit f ON sl.fruit_id = f.fruit_id "
-                       + "WHERE sl.shop_id = ? AND sl.fruit_id = ?";
-            
+                    + "FROM stocklevel sl "
+                    + "JOIN fruit f ON sl.fruit_id = f.fruit_id "
+                    + "WHERE sl.shop_id = ? AND sl.fruit_id = ?";
+
             PreparedStatement pstmt = prepareStatement(query);
             pstmt.setString(1, shopId);
             pstmt.setString(2, fruitId);
-            
+
             ResultSet rs = pstmt.executeQuery();
-            
+
             if (rs.next()) {
                 StockLevelBean stock = new StockLevelBean();
                 stock.setStockId(rs.getString("stock_id"));
@@ -547,13 +567,13 @@ public class ProjectDB {
                 stock.setWarehouseId(rs.getString("warehouse_id"));
                 stock.setQuantity(rs.getInt("quantity"));
                 stock.setFruitName(rs.getString("fruit_name"));
-                
+
                 return stock;
             }
-            
+
             rs.close();
             pstmt.close();
-            
+
             return null;
         } catch (SQLException ex) {
             throw new RuntimeException("Error getting stock level", ex);
@@ -570,12 +590,12 @@ public class ProjectDB {
             if (rs.next()) {
                 lastId = rs.getString("reservation_id");
             }
-            
+
             // If no existing reservation, start with v001
             if (lastId == null) {
                 return "v001";
             }
-            
+
             // Generate next ID using IdManager
             return IdManager.nextId(lastId);
         } catch (SQLException e) {
@@ -588,23 +608,23 @@ public class ProjectDB {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than 0");
         }
-        
+
         // Validate order date
         java.sql.Date today = new java.sql.Date(System.currentTimeMillis());
         java.sql.Date maxOrderDate = new java.sql.Date(today.getTime() + (14 * 24 * 60 * 60 * 1000));
-        
+
         if (orderDate.before(today)) {
             throw new RuntimeException("Order date must be in the future");
         }
         if (orderDate.after(maxOrderDate)) {
             throw new RuntimeException("Order date must be within next 14 days");
         }
-        
+
         String reservationId = generateReservationId();
         try {
             // Calculate end date as 14 days from order date
             java.sql.Date endDate = new java.sql.Date(orderDate.getTime() + (14 * 24 * 60 * 60 * 1000));
-            
+
             String query = "INSERT INTO reservation (reservation_id, shop_id, fruit_id, quantity, order_date, end_date, status) VALUES (?, ?, ?, ?, ?, ?, 0)";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, reservationId);
@@ -614,9 +634,9 @@ public class ProjectDB {
             stmt.setDate(5, orderDate);
             stmt.setDate(6, endDate);
             stmt.executeUpdate();
-            
+
             System.out.println("Reservation created successfully with ID: " + reservationId);
-            
+
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create reservation", e);
         }
@@ -688,8 +708,8 @@ public class ProjectDB {
         ArrayList<ReservationBean> reservations = new ArrayList<>();
         try {
             String query = "SELECT r.* FROM reservation r "
-                        + "JOIN shop s ON r.shop_id = s.shop_id "
-                        + "WHERE s.city_id = ?";
+                    + "JOIN shop s ON r.shop_id = s.shop_id "
+                    + "WHERE s.city_id = ?";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, cityId);
             ResultSet rs = stmt.executeQuery();
@@ -714,9 +734,9 @@ public class ProjectDB {
         ArrayList<ReservationBean> reservations = new ArrayList<>();
         try {
             String query = "SELECT r.* FROM reservation r "
-                        + "JOIN shop s ON r.shop_id = s.shop_id "
-                        + "JOIN city c ON s.city_id = c.city_id "
-                        + "WHERE c.region_id = ?";
+                    + "JOIN shop s ON r.shop_id = s.shop_id "
+                    + "JOIN city c ON s.city_id = c.city_id "
+                    + "WHERE c.region_id = ?";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, regionId);
             ResultSet rs = stmt.executeQuery();
@@ -741,8 +761,8 @@ public class ProjectDB {
         ArrayList<ReservationBean> reservations = new ArrayList<>();
         try {
             String query = "SELECT r.* FROM reservation r "
-                        + "JOIN user u ON r.shop_id = u.shop_id "
-                        + "WHERE u.user_id = ?";
+                    + "JOIN user u ON r.shop_id = u.shop_id "
+                    + "WHERE u.user_id = ?";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -773,12 +793,12 @@ public class ProjectDB {
             if (rs.next()) {
                 lastId = rs.getString("borrow_id");
             }
-            
+
             // If no existing borrow, start with b001
             if (lastId == null) {
                 return "b001";
             }
-            
+
             // Generate next ID using IdManager
             return IdManager.nextId(lastId);
         } catch (SQLException e) {
@@ -789,14 +809,14 @@ public class ProjectDB {
     // Helper method to check if shops are in the same city
     private void checkSameCity(String fromShopId, String toShopId) throws SQLException {
         String cityQuery = "SELECT s1.city_id, s2.city_id "
-                        + "FROM shop s1 JOIN shop s2 "
-                        + "ON s1.city_id = s2.city_id "
-                        + "WHERE s1.shop_id = ? AND s2.shop_id = ?";
+                + "FROM shop s1 JOIN shop s2 "
+                + "ON s1.city_id = s2.city_id "
+                + "WHERE s1.shop_id = ? AND s2.shop_id = ?";
         PreparedStatement cityStmt = prepareStatement(cityQuery);
         cityStmt.setString(1, fromShopId);
         cityStmt.setString(2, toShopId);
         ResultSet cityRs = cityStmt.executeQuery();
-        
+
         if (!cityRs.next()) {
             throw new RuntimeException("Shops must be in the same city");
         }
@@ -805,19 +825,19 @@ public class ProjectDB {
     // Helper method to check stock availability
     private void checkStockAvailability(String id, String fruitId, int quantity) throws SQLException {
         String stockQuery = "SELECT SUM(quantity) as total_quantity "
-                        + "FROM stocklevel "
-                        + "WHERE (shop_id = ? OR warehouse_id = ?) AND fruit_id = ?";
+                + "FROM stocklevel "
+                + "WHERE (shop_id = ? OR warehouse_id = ?) AND fruit_id = ?";
         PreparedStatement stockStmt = prepareStatement(stockQuery);
         stockStmt.setString(1, id);
         stockStmt.setString(2, id);
         stockStmt.setString(3, fruitId);
         ResultSet stockRs = stockStmt.executeQuery();
-        
+
         if (!stockRs.next()) {
             throw new RuntimeException("No stock found for ID: " + id + ", fruit: " + fruitId);
         }
         int totalQuantity = stockRs.getInt("total_quantity");
-        
+
         if (totalQuantity < quantity) {
             throw new RuntimeException("Insufficient stock. Available: " + totalQuantity + ", Requested: " + quantity);
         }
@@ -826,8 +846,8 @@ public class ProjectDB {
     private void updateStockLevel(String fromShopId, String fruitId, int quantity) throws SQLException {
         // Decrease quantity in from shop
         String decreaseQuery = "UPDATE stocklevel "
-                            + "SET quantity = quantity - ? "
-                            + "WHERE shop_id = ? AND fruit_id = ?";
+                + "SET quantity = quantity - ? "
+                + "WHERE shop_id = ? AND fruit_id = ?";
         PreparedStatement decreaseStmt = prepareStatement(decreaseQuery);
         decreaseStmt.setInt(1, quantity);
         decreaseStmt.setString(2, fromShopId);
@@ -840,13 +860,13 @@ public class ProjectDB {
         try {
             checkSameCity(fromShopId, toShopId);
             checkStockAvailability(fromShopId, fruitId, quantity);
-            
+
             // Generate borrow ID
             String borrowId = generateBorrowId();
-            
+
             // Insert borrow request
             String insertQuery = "INSERT INTO borrow (borrow_id, from_shop, to_shop, fruit_id, quantity, status, date) "
-                              + "VALUES (?, ?, ?, ?, ?, 0, CURRENT_DATE())";
+                    + "VALUES (?, ?, ?, ?, ?, 0, CURRENT_DATE())";
             PreparedStatement insertStmt = prepareStatement(insertQuery);
             insertStmt.setString(1, borrowId);
             insertStmt.setString(2, fromShopId);
@@ -854,12 +874,12 @@ public class ProjectDB {
             insertStmt.setString(4, fruitId);
             insertStmt.setInt(5, quantity);
             insertStmt.executeUpdate();
-            
+
             // Update stock level
             updateStockLevel(fromShopId, fruitId, quantity);
-            
+
             System.out.println("Borrow request created successfully: " + borrowId);
-            
+
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create borrow request: " + e.getMessage(), e);
         }
@@ -885,26 +905,26 @@ public class ProjectDB {
             PreparedStatement selectStmt = prepareStatement(query);
             selectStmt.setString(1, borrowId);
             ResultSet rs = selectStmt.executeQuery();
-            
+
             if (rs.next()) {
                 String fromShopId = rs.getString("from_shop");
                 String fruitId = rs.getString("fruit_id");
                 int quantity = rs.getInt("quantity");
-                
+
                 // Rollback stock level
                 updateStockLevel(fromShopId, fruitId, -quantity);
-                
+
                 // Update borrow status to denied (status = 2)
                 String updateQuery = "UPDATE borrow SET status = 2 WHERE borrow_id = ?";
                 PreparedStatement updateStmt = prepareStatement(updateQuery);
                 updateStmt.setString(1, borrowId);
                 updateStmt.executeUpdate();
-                
+
                 System.out.println("Borrow request denied and stock levels rolled back successfully");
             } else {
                 throw new RuntimeException("Borrow request not found: " + borrowId);
             }
-            
+
         } catch (SQLException e) {
             throw new RuntimeException("Failed to deny borrow request: " + e.getMessage(), e);
         }
@@ -949,11 +969,11 @@ public class ProjectDB {
     public ArrayList<BorrowBean> getBorrowByCity(String cityId) {
         try {
             String query = "SELECT b.* FROM borrow b "
-                        + "JOIN shop s ON s.shop_id = b.from_shop OR s.shop_id = b.to_shop "
-                        + "WHERE s.city_id = ?";
+                    + "JOIN shop s ON s.shop_id = b.from_shop OR s.shop_id = b.to_shop "
+                    + "WHERE s.city_id = ?";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, cityId);
-            
+
             ResultSet rs = stmt.executeQuery();
             ArrayList<BorrowBean> borrows = new ArrayList<>();
             while (rs.next()) {
@@ -977,45 +997,46 @@ public class ProjectDB {
         try {
             // Check if warehouse has enough stock
             checkStockAvailability(warehouseId, fruitId, quantity);
-            
+
             // Get central warehouse ID for the region
             String centralWarehouseId = "cw" + getCentralWarehouseNumber(regionId);
-            
+
             // Update both warehouses in a single transaction
-            String updateQuery = "UPDATE stocklevel " +
-                                "SET quantity = CASE " +
-                                "WHEN stock_id = ? THEN quantity - ? " +
-                                "WHEN stock_id = ? THEN quantity + ? " +
-                                "END " +
-                                "WHERE stock_id IN (?, ?)";
-            
+            String updateQuery = "UPDATE stocklevel "
+                    + "SET quantity = CASE "
+                    + "WHEN stock_id = ? THEN quantity - ? "
+                    + "WHEN stock_id = ? THEN quantity + ? "
+                    + "END "
+                    + "WHERE stock_id IN (?, ?)";
+
             PreparedStatement stmt = prepareStatement(updateQuery);
-            
+
             // Set parameters for source warehouse (decrease)
             stmt.setString(1, generateWarehouseStockId(warehouseId, fruitId));
             stmt.setInt(2, quantity);
-            
+
             // Set parameters for central warehouse (increase)
             stmt.setString(3, generateWarehouseStockId(centralWarehouseId, fruitId));
             stmt.setInt(4, quantity);
-            
+
             // Set parameters for WHERE clause
             stmt.setString(5, generateWarehouseStockId(warehouseId, fruitId));
             stmt.setString(6, generateWarehouseStockId(centralWarehouseId, fruitId));
-            
+
             stmt.executeUpdate();
-            
+
             System.out.println("Stock check-out to central warehouse processed successfully for region: " + regionId);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to process check-out to central: " + e.getMessage(), e);
         }
     }
+
     public StockLevelBean getStockByWarehouse(String warehouseId) {
         try {
             String query = "SELECT sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id, SUM(sl.quantity) as total_quantity "
-                         + "FROM stocklevel sl "
-                         + "WHERE sl.warehouse_id = ? "
-                         + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
+                    + "FROM stocklevel sl "
+                    + "WHERE sl.warehouse_id = ? "
+                    + "GROUP BY sl.stock_id, sl.shop_id, sl.fruit_id, sl.warehouse_id";
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, warehouseId);
             ResultSet rs = stmt.executeQuery();
@@ -1037,10 +1058,14 @@ public class ProjectDB {
     // Helper method to get central warehouse number based on region
     private String getCentralWarehouseNumber(String regionId) {
         switch (regionId) {
-            case "r001": return "001"; // Hong Kong
-            case "r002": return "002"; // USA
-            case "r003": return "003"; // Japan
-            default: throw new IllegalArgumentException("Invalid region ID: " + regionId);
+            case "r001":
+                return "001"; // Hong Kong
+            case "r002":
+                return "002"; // USA
+            case "r003":
+                return "003"; // Japan
+            default:
+                throw new IllegalArgumentException("Invalid region ID: " + regionId);
         }
     }
 
@@ -1049,31 +1074,31 @@ public class ProjectDB {
         try {
             // Check if warehouse has enough stock
             checkStockAvailability(centralWarehouseId, fruitId, quantity);
-            
+
             // Update both locations in a single transaction
-            String updateQuery = "UPDATE stocklevel " +
-                                "SET quantity = CASE " +
-                                "WHEN stock_id = ? THEN quantity - ? " +
-                                "WHEN stock_id = ? THEN quantity + ? " +
-                                "END " +
-                                "WHERE stock_id IN (?, ?)";
-            
+            String updateQuery = "UPDATE stocklevel "
+                    + "SET quantity = CASE "
+                    + "WHEN stock_id = ? THEN quantity - ? "
+                    + "WHEN stock_id = ? THEN quantity + ? "
+                    + "END "
+                    + "WHERE stock_id IN (?, ?)";
+
             PreparedStatement stmt = prepareStatement(updateQuery);
-            
+
             // Set parameters for warehouse (decrease)
             stmt.setString(1, generateWarehouseStockId(centralWarehouseId, fruitId));
             stmt.setInt(2, quantity);
-            
+
             // Set parameters for shop (increase)
             stmt.setString(3, generateShopStockId(shopId, fruitId));
             stmt.setInt(4, quantity);
-            
+
             // Set parameters for WHERE clause
             stmt.setString(5, generateWarehouseStockId(centralWarehouseId, fruitId));
             stmt.setString(6, generateShopStockId(shopId, fruitId));
-            
+
             stmt.executeUpdate();
-            
+
             System.out.println("Stock check-out to local shop processed successfully");
         } catch (SQLException e) {
             throw new RuntimeException("Failed to process check-out to local: " + e.getMessage(), e);

@@ -10,7 +10,21 @@ package ict.bean;
  */
 public class EmployeeBean {
 
-    private String region, location, name, role;
+    private String userId, region, location, name, role;
+
+    public EmployeeBean(String userId, String region, String location, String name, String role) {
+        this.userId = userId;
+        this.region = region;
+        this.location = location;
+        this.name = name;
+        this.role = role;
+    }
+
+    
+    
+    public String getUserId() {
+        return userId;
+    }
 
     public String getLocation() {
         return location;
@@ -26,6 +40,10 @@ public class EmployeeBean {
 
     public String getRole() {
         return role;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public void setLocation(String location) {
