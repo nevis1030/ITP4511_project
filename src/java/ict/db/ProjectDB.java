@@ -340,7 +340,7 @@ public class ProjectDB {
             throw new RuntimeException("Failed to add fruit", ex);
         }
     }
-
+    
     public void addFruit(String cityId, String fruitName) {
         String fruitId = getNextFruitId();
         addFruit(fruitId, cityId, fruitName);

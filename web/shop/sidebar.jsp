@@ -22,6 +22,8 @@
                    href="${pageContext.request.contextPath}/shop/borrow">Borrowing Fruit</a>
                 <a class="nav-link ${param.tab == 'stock' ? 'active' : ''}" 
                    href="${pageContext.request.contextPath}/shop/stock">Stock Level</a>
+                <a class="nav-link ${param.tab == 'add-fruit' ? 'active' : ''}" 
+                   href="${pageContext.request.contextPath}/shop/add-fruit">Add Fruit</a>
                 <a class="nav-link ${param.tab == 'account' ? 'active' : ''}" 
                    href="${pageContext.request.contextPath}/shop_dashboard.jsp?tab=account">Account</a>
             </c:if>

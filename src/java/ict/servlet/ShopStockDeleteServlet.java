@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package ict.servlet;
 
 import ict.bean.UserBean;
@@ -13,23 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet to handle deleting stock items
- * 
- * @author local_user
- */
+
 @WebServlet(name = "ShopStockDeleteServlet", urlPatterns = {"/shop/stock/delete"})
 public class ShopStockDeleteServlet extends BaseServlet {
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * Deletes a stock item based on form submission
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

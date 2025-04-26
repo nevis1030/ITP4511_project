@@ -1,13 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package ict.servlet;
 
+import ict.bean.CityBean;
 import ict.bean.FruitBean;
 import ict.bean.ReservationBean;
 import ict.bean.UserBean;
-import ict.bean.CityBean;
 import ict.db.ProjectDB;
 import java.io.IOException;
 import java.sql.Date;
@@ -20,23 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet to handle reservation data display and creation
- * 
- * @author local_user
- */
 @WebServlet(name = "ReserveServlet", urlPatterns = {"/shop/reserve"})
 public class ReserveServlet extends BaseServlet {
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     * Retrieves reservation data and forwards to reserving.jsp for display
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -85,15 +67,6 @@ public class ReserveServlet extends BaseServlet {
         rd.forward(request, response);
     }
     
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * Creates a new reservation request based on form submission
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
