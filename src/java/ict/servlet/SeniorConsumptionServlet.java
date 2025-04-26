@@ -4,6 +4,7 @@
  */
 package ict.servlet;
 
+import ict.bean.ConsumptionBean;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import ict.db.ProjectDB;
@@ -11,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 /**
  *
  * @author local_user
@@ -21,6 +23,8 @@ public class SeniorConsumptionServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        
+        ArrayList<ConsumptionBean> consumptions = db.listAllConsumption();
+        req.setAttribute("consumptions", consumptions);
+        req.getRequestDispatcher("/senior/consumption.jsp").forward(req, resp);
     }       
 }

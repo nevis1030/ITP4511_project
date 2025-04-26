@@ -8,7 +8,7 @@
 <%@page import="java.time.ZoneId" %>
 <%@page import="java.util.Date" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="ict.bean.EmployeeBean"%>
+<%@page import="ict.bean.ConsumptionBean"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -38,7 +38,6 @@
                 <div class="col-md-3 col-lg-2 sidebar">
                     <%@include file="sidebar.jsp"%>
                 </div>
-
                 <!-- Main Content -->
                 <div class="col-md-9 col-lg-10 p-4">
                     <h3>Consumption Analytics</h3>
@@ -48,16 +47,31 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Region</th>
-                                        <th>Shop</th>
-                                        <th>Date</th>
                                         <th>Season</th>
                                         <th>Fruit</th>
                                         <th>Quantity</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Add dynamic data here -->
+                                    <%
+                                        ArrayList<ConsumptionBean> list = (ArrayList<ConsumptionBean>)request.getAttribute("consumptions");
+                                        if (list != null) {
+                                            for(ConsumptionBean item: list){
+                                                pageContext.setAttribute("item", item);
+                                    %>
+                                    <tr>
+                                        <th><%= item.getConsumptionId()%></th>
+                                        <th><%= item.getRegionId()%></th>
+                                        <th><%= item.getSeason()%></th>
+                                        <th><%= item.getFruitId()%></th>
+                                        <th><%= item.getQuantity()%></th>
+                                    </tr>
+                                    <%
+                                            }
+                                        }
+                                    %>
                                 </tbody>
                             </table>
                         </div>

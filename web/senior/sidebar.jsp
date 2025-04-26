@@ -38,8 +38,8 @@
     <nav class="nav flex-column">
         <!-- Shop Staff Menu -->
 
-        <a class="nav-link" href="">Reservation</a>
-        <a class="nav-link" href="">Consumption</a>
+        <a class="nav-link" href="reservation">Reservation</a>
+        <a class="nav-link" href="consumption">Consumption</a>
         <a class="nav-link" href="employee">Employee</a>
         <a class="nav-link" href="account">Account</a>
     </nav>
