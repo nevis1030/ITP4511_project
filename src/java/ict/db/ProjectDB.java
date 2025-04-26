@@ -368,6 +368,17 @@ public class ProjectDB {
         }
     }
 
+    public void deleteStock(String stockId) {
+        try {
+            String query = "DELETE FROM stocklevel WHERE stock_id = ?";
+            PreparedStatement stmt = prepareStatement(query);
+            stmt.setString(1, stockId);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Failed to delete stock", ex);
+        }
+    }
+
     public ArrayList<FruitBean> listAllFruits() {
         ArrayList<FruitBean> fruits = new ArrayList<>();
         try {
@@ -445,7 +456,7 @@ public class ProjectDB {
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, shopId);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 StockLevelBean stock = new StockLevelBean();
                 stock.setStockId(rs.getString("stock_id"));
                 stock.setShopId(rs.getString("shop_id"));
