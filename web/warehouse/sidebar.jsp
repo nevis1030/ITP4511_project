@@ -35,6 +35,7 @@
     </div>
     <nav class="nav flex-column">
         <a class="nav-link" href="warehouse_reservation?userId=${sessionScope.user.userId}">Reserving Fruit</a>
+        <a class="nav-link" href="warehouse_delivery?userId=${sessionScope.user.userId}">Delivery Record</a>
         <a class="nav-link" href="warehouse_stock?userId=${sessionScope.user.userId}">Stock Level</a>
         <a class="nav-link" href="warehouse_account">Account</a>
     </nav>

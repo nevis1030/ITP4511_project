@@ -1,15 +1,15 @@
 <%-- 
-    Document   : consumption
-    Created on : 26 Apr 2025, 2:24:55 pm
+    Document   : stocklevel
+    Created on : 26 Apr 2025, 10:53:18 pm
     Author     : local_user
 --%>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.time.LocalDate" %>
 <%@page import="java.time.ZoneId" %>
 <%@page import="java.util.Date" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="ict.bean.ConsumptionBean"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="ict.bean.WarehouseReserveBean"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="pageTitle" value="Management" scope="request"/>
@@ -38,37 +38,59 @@
                 <div class="col-md-3 col-lg-2 sidebar">
                     <%@include file="sidebar.jsp"%>
                 </div>
+
                 <!-- Main Content -->
                 <div class="col-md-9 col-lg-10 p-4">
-                    <h3>Consumption Analytics</h3>
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Consumption Record</h5>
+                            <h5>Delivery Record</h5>
                             <table class="table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Region</th>
-                                        <th>Season</th>
-                                        <th>Fruit</th>
+                                        <th>Shop ID</th>
+                                        <th>Shop Name</th>
+                                        <th>Fruit ID</th>
+                                        <th>Fruit Name</th>
                                         <th>Quantity</th>
+                                        <th>Order Date</th>
+                                        <th>End Date</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <%
-                                        ArrayList<ConsumptionBean> list = (ArrayList<ConsumptionBean>)request.getAttribute("consumptions");
-                                        if (list != null) {
-                                            for(ConsumptionBean item: list){
+                                        ArrayList<WarehouseReserveBean> list = (ArrayList<WarehouseReserveBean>)request.getAttribute("list");
+                                        if (list != null){
+                                            for(WarehouseReserveBean item : list){
                                                 pageContext.setAttribute("item", item);
+                                                if(item.getStatus().equals("Approved")||item.getStatus().equals("Completed")){
                                     %>
                                     <tr>
-                                        <th><%= item.getConsumptionId()%></th>
-                                        <th><%= item.getRegionId()%></th>
-                                        <th><%= item.getSeason()%></th>
-                                        <th><%= item.getFruitId()%></th>
-                                        <th><%= item.getQuantity()%></th>
+                                        <td><%= item.getReservationId()%></td>
+                                        <td><%= item.getShopId()%></td>
+                                        <td><%= item.getShopName()%></td>
+                                        <td><%= item.getFruitId()%></td>
+                                        <td><%= item.getFruitName()%></td>
+                                        <td><%= item.getQuantity()%></td>
+                                        <td><%= item.getOrderDate()%></td>
+                                        <td><%= item.getEndDate()%></td>
+                                        <td>
+                                            <%
+                                                if(item.getStatus().equals("Approved")){
+                                            %>
+                                            Delivery En-route
+                                            <%        
+                                                }else if(item.getStatus().equals("Completed")){
+                                            %>
+                                            Delivery Completed
+                                            <%    
+                                                }
+                                            %>
+                                        </td>
                                     </tr>
                                     <%
+                                                }
                                             }
                                         }
                                     %>
