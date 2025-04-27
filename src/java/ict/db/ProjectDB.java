@@ -15,6 +15,7 @@ import ict.bean.BorrowBean;
 import ict.bean.ShopBean;
 import ict.bean.CityBean;
 import ict.bean.ConsumptionBean;
+import ict.bean.ShopConsumptionBean;
 import ict.bean.WarehouseBean;
 import ict.util.CodeManager;
 import ict.util.IdManager;
@@ -1371,8 +1372,8 @@ public ArrayList<ConsumptionBean> listAllConsumption() {
     }
 
     // Version for region-specific consumption records
-    public ArrayList<ConsumptionBean> listAllConsumption(String regionId) {
-        ArrayList<ConsumptionBean> consumptions = new ArrayList<>();
+    public ArrayList<ShopConsumptionBean> listAllConsumption(String regionId) {
+        ArrayList<ShopConsumptionBean> consumptions = new ArrayList<>();
         try {
             PreparedStatement stmt = connection.prepareStatement(
                 "SELECT * FROM consumption WHERE region_id = ?"
@@ -1381,7 +1382,7 @@ public ArrayList<ConsumptionBean> listAllConsumption() {
             ResultSet rs = stmt.executeQuery();
             
             while (rs.next()) {
-                ConsumptionBean consumption = new ConsumptionBean();
+                ShopConsumptionBean consumption = new ShopConsumptionBean();
                 consumption.setConsumptionId(rs.getString("consumption_id"));
                 consumption.setFruitId(rs.getString("fruit_id"));
                 consumption.setRegionId(rs.getString("region_id"));
@@ -1399,8 +1400,8 @@ public ArrayList<ConsumptionBean> listAllConsumption() {
         return consumptions;
     }
 
-    public ConsumptionBean getConsumptionById(String consumptionId) {
-        ConsumptionBean consumption = null;
+    public ShopConsumptionBean getConsumptionById(String consumptionId) {
+        ShopConsumptionBean consumption = null;
         try {
             PreparedStatement pstmt = connection.prepareStatement(
                 "SELECT * FROM consumption WHERE consumption_id = ?"
@@ -1410,7 +1411,7 @@ public ArrayList<ConsumptionBean> listAllConsumption() {
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                consumption = new ConsumptionBean();
+                consumption = new ShopConsumptionBean();
                 consumption.setConsumptionId(rs.getString("consumption_id"));
                 consumption.setFruitId(rs.getString("fruit_id"));
                 consumption.setRegionId(rs.getString("region_id"));

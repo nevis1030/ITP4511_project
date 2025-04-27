@@ -8,7 +8,7 @@
 <%@page import="java.time.ZoneId" %>
 <%@page import="java.util.Date" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="ict.bean.ConsumptionBean"%>
+<%@page import="ict.bean.ShopConsumptionBean"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -56,9 +56,9 @@
                                 </thead>
                                 <tbody>
                                     <%
-                                        ArrayList<ConsumptionBean> list = (ArrayList<ConsumptionBean>)request.getAttribute("consumptions");
+                                        ArrayList<ShopConsumptionBean> list = (ArrayList<ShopConsumptionBean>)request.getAttribute("consumptions");
                                         if (list != null) {
-                                            for(ConsumptionBean item: list){
+                                            for(ShopConsumptionBean item: list){
                                                 pageContext.setAttribute("item", item);
                                     %>
                                     <tr>

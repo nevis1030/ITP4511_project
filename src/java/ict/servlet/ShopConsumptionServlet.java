@@ -1,6 +1,6 @@
 package ict.servlet;
 
-import ict.bean.ConsumptionBean;
+import ict.bean.ShopConsumptionBean;
 import ict.bean.FruitBean;
 import ict.bean.UserBean;
 import ict.db.ProjectDB;
@@ -41,7 +41,7 @@ public class ShopConsumptionServlet extends BaseServlet {
         String regionId = db.getRegionIdForShop(shopId);
         
         // Get consumption data for the region
-        ArrayList<ConsumptionBean> consumptions = db.listAllConsumption(regionId);
+        ArrayList<ShopConsumptionBean> consumptions = db.listAllConsumption(regionId);
         
         // Get available options for edit modal
         ArrayList<FruitBean> availableFruits = db.getFruitsInRegion(regionId);
@@ -88,7 +88,7 @@ public class ShopConsumptionServlet extends BaseServlet {
                 ProjectDB db = ProjectDB.getInstance();
                 
                 // Security check - get the consumption record and verify it's in the same region
-                ConsumptionBean consumption = db.getConsumptionById(consumptionId);
+                ShopConsumptionBean consumption = db.getConsumptionById(consumptionId);
                 if (consumption == null) {
                     response.sendRedirect(request.getContextPath() + "/shop/consumption?error=Record not found");
                     return;
@@ -123,7 +123,7 @@ public class ShopConsumptionServlet extends BaseServlet {
                 
                 // Security check - get the consumption record and verify it's in the same region
                 ProjectDB db = ProjectDB.getInstance();
-                ConsumptionBean consumption = db.getConsumptionById(consumptionId);
+                ShopConsumptionBean consumption = db.getConsumptionById(consumptionId);
                 if (consumption == null) {
                     response.sendRedirect(request.getContextPath() + "/shop/consumption?error=Record not found");
                     return;
