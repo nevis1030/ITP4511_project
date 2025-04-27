@@ -2,7 +2,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="mt-4">
-    <h3>Consumption Records</h3>
+    <h3>Check out Records</h3>
     <c:if test="${consumptions != null && not empty consumptions}">
         <table class="table table-striped">
             <thead>

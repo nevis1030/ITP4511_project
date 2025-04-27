@@ -42,7 +42,7 @@
                 <a class="nav-link ${param.tab == 'add-fruit' ? 'active' : ''}" 
                    href="${pageContext.request.contextPath}/shop/add-fruit">Fruit Management</a>
                 <a class="nav-link ${param.tab == 'consumption' ? 'active' : ''}" 
-                   href="${pageContext.request.contextPath}/shop/consumption">Consumption</a>
+                   href="${pageContext.request.contextPath}/shop/consumption">Check out</a>
                 <a class="nav-link ${param.tab == 'account' ? 'active' : ''}" 
                    href="${pageContext.request.contextPath}/shop_dashboard.jsp?tab=account">Account</a>
             </c:if>
