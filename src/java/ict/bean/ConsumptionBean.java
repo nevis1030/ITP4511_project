@@ -5,13 +5,12 @@ public class ConsumptionBean {
     private String fruitId;
     private String regionId;
     private int quantity;
-    private String season; // {0: Spring, 1: Summer, 2: Fall, 3: Winter}
+    private int season; // {0: Spring, 1: Summer, 2: Fall, 3: Winter}
 
     public ConsumptionBean() {
     }
 
-
-    public ConsumptionBean(String consumptionId, String fruitId, String regionId, int quantity, String season) {
+    public ConsumptionBean(String consumptionId, String fruitId, String regionId, int quantity, int season) {
         this.consumptionId = consumptionId;
         this.fruitId = fruitId;
         this.regionId = regionId;
@@ -32,12 +31,27 @@ public class ConsumptionBean {
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     
-    public String getSeason() { return season; }
-    public void setSeason(String season) { this.season = season; }
+    public int getSeason() { return season; }
+    public void setSeason(int season) { this.season = season; }
+
+    public String getSeasonText() {
+        switch (season) {
+            case 0:
+                return "Spring";
+            case 1:
+                return "Summer";
+            case 2:
+                return "Fall";
+            case 3:
+                return "Winter";
+            default:
+                return "Unknown";
+        }
+    }
 
     // Print method
     public String toString() {
-        return String.format("Consumption ID: %s, Fruit ID: %s, Shop ID: %s, Region ID: %s, Quantity: %d, Season: %d",
+        return String.format("Consumption ID: %s, Fruit ID: %s, Region ID: %s, Quantity: %d, Season: %d",
             consumptionId, fruitId, regionId, quantity, season);
     }
 }

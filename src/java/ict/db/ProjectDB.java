@@ -5,7 +5,6 @@
 package ict.db;
 
 import java.sql.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import ict.bean.UserBean;
 import ict.bean.FruitBean;
@@ -15,7 +14,6 @@ import ict.bean.BorrowBean;
 import ict.bean.ShopBean;
 import ict.bean.CityBean;
 import ict.bean.ConsumptionBean;
-import ict.util.CodeManager;
 import ict.util.IdManager;
 
 /**
@@ -141,6 +139,15 @@ public class ProjectDB {
                     + "PRIMARY KEY (borrow_id)"
                     + ")";
 
+            String createConsumptionTable = "CREATE TABLE IF NOT EXISTS consumption ("
+                    + "consumption_id varchar(20) NOT NULL,"
+                    + "fruit_id varchar(20) NOT NULL,"
+                    + "region_id varchar(20) NOT NULL,"
+                    + "quantity int NOT NULL,"
+                    + "season int NOT NULL,"
+                    + "PRIMARY KEY (consumption_id)"
+                    + ")";
+
             executeUpdate(createUserTable);
             executeUpdate(createShopTable);
             executeUpdate(createWarehouseTable);
@@ -149,6 +156,7 @@ public class ProjectDB {
             executeUpdate(createStockLevelTable);
             executeUpdate(createReservationTable);
             executeUpdate(createBorrowTable);
+            executeUpdate(createConsumptionTable);
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to create tables", ex);
         }
@@ -164,6 +172,7 @@ public class ProjectDB {
             executeUpdate("DROP TABLE IF EXISTS warehouse");
             executeUpdate("DROP TABLE IF EXISTS city");
             executeUpdate("DROP TABLE IF EXISTS fruit");
+            executeUpdate("DROP TABLE IF EXISTS consumption");
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to drop tables", ex);
         }
@@ -1267,33 +1276,216 @@ public class ProjectDB {
         }
     }
 
-    public ArrayList<ConsumptionBean> listAllConsumption() {
+    // Get region ID for a shop using city as intermediary
+    public String getRegionIdForShop(String shopId) {
+        String regionId = "r001"; // Default region if not found
+        
         try {
-            ArrayList<ConsumptionBean> consumptions = new ArrayList();
-            CodeManager cM = new CodeManager();
-            String query = "SELECT c.*, f.fruit_name, r.region_name "
-                    + "FROM consumption c "
-                    + "LEFT JOIN fruit f ON c.fruit_id = f.fruit_id "
-                    + "LEFT JOIN region r ON c.region_id = r.region_id ";
-            PreparedStatement stmt = prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
+            PreparedStatement pstmt = connection.prepareStatement(
+                "SELECT c.region_id FROM shop s " +
+                "JOIN city c ON s.city_id = c.city_id " +
+                "WHERE s.shop_id = ?"
+            );
+            
+            pstmt.setString(1, shopId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                regionId = rs.getString("region_id");
+            }
+            
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return regionId;
+    }
+    
+    // Get region ID for a user using their user ID
+    public String getRegionIdForUser(String userId) {
+        String regionId = "r001"; // Default region if not found
+        
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(
+                "SELECT c.region_id FROM user u " +
+                "JOIN shop s ON u.shop_id = s.shop_id " +
+                "JOIN city c ON s.city_id = c.city_id " +
+                "WHERE u.user_id = ?"
+            );
+            
+            pstmt.setString(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                regionId = rs.getString("region_id");
+            }
+            
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return regionId;
+    }
+    
+    // Version for all consumption records (for senior staff)
+    public ArrayList<ConsumptionBean> listAllConsumption() {
+        ArrayList<ConsumptionBean> consumptions = new ArrayList<>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM consumption");
+            
             while (rs.next()) {
                 ConsumptionBean consumption = new ConsumptionBean();
                 consumption.setConsumptionId(rs.getString("consumption_id"));
-                consumption.setFruitId(rs.getString("fruit_name"));
+                consumption.setFruitId(rs.getString("fruit_id"));
+                consumption.setRegionId(rs.getString("region_id"));
                 consumption.setQuantity(rs.getInt("quantity"));
-                consumption.setRegionId(rs.getString("region_name"));
-                consumption.setSeason(cM.getSeason(rs.getInt("season")));
-
+                consumption.setSeason(rs.getInt("season"));
                 consumptions.add(consumption);
             }
-            return consumptions;
-        } catch (SQLException ex) {
-            System.err.println("[ERROR] SQL Exception occurred:");
-            System.err.println("SQL State: " + ex.getSQLState());
-            System.err.println("Error Code: " + ex.getErrorCode());
-            System.err.println("Message: " + ex.getMessage());
-            throw new RuntimeException("Failed to list consumptions", ex);
+            
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return consumptions;
+    }
+
+    // Version for region-specific consumption records
+    public ArrayList<ConsumptionBean> listAllConsumption(String regionId) {
+        ArrayList<ConsumptionBean> consumptions = new ArrayList<>();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM consumption WHERE region_id = ?"
+            );
+            stmt.setString(1, regionId);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                ConsumptionBean consumption = new ConsumptionBean();
+                consumption.setConsumptionId(rs.getString("consumption_id"));
+                consumption.setFruitId(rs.getString("fruit_id"));
+                consumption.setRegionId(rs.getString("region_id"));
+                consumption.setQuantity(rs.getInt("quantity"));
+                consumption.setSeason(rs.getInt("season"));
+                consumptions.add(consumption);
+            }
+            
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return consumptions;
+    }
+
+    public ConsumptionBean getConsumptionById(String consumptionId) {
+        ConsumptionBean consumption = null;
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(
+                "SELECT * FROM consumption WHERE consumption_id = ?"
+            );
+            
+            pstmt.setString(1, consumptionId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                consumption = new ConsumptionBean();
+                consumption.setConsumptionId(rs.getString("consumption_id"));
+                consumption.setFruitId(rs.getString("fruit_id"));
+                consumption.setRegionId(rs.getString("region_id"));
+                consumption.setQuantity(rs.getInt("quantity"));
+                consumption.setSeason(rs.getInt("season"));
+            }
+            
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return consumption;
+    }
+
+    public void deleteConsumption(String consumptionId) {
+        try {
+            PreparedStatement pstmt = connection.prepareStatement("DELETE FROM consumption WHERE consumption_id = ?");
+            pstmt.setString(1, consumptionId);
+            pstmt.executeUpdate();
+            
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateConsumption(String consumptionId, String fruitId, String regionId, int quantity, int season) {
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(
+                "UPDATE consumption SET fruit_id = ?, region_id = ?, quantity = ?, season = ? WHERE consumption_id = ?"
+            );
+            
+            pstmt.setString(1, fruitId);
+            pstmt.setString(2, regionId);
+            pstmt.setInt(3, quantity);
+            pstmt.setInt(4, season);
+            pstmt.setString(5, consumptionId);
+            
+            pstmt.executeUpdate();
+            
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Add sample consumption data for testing
+    public void addSampleConsumptionData() {
+        try {
+            // First check if consumption data already exists
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) as count FROM consumption");
+            rs.next();
+            int count = rs.getInt("count");
+            
+            if (count == 0) {
+                // Insert sample consumption records
+                PreparedStatement pstmt = connection.prepareStatement(
+                    "INSERT INTO consumption (consumption_id, fruit_id, region_id, quantity, season) " +
+                    "VALUES (?, ?, ?, ?, ?)"
+                );
+                
+                // First record
+                pstmt.setString(1, "m001");
+                pstmt.setString(2, "f001");
+                pstmt.setString(3, "r001");
+                pstmt.setInt(4, 20);
+                pstmt.setInt(5, 1);  // Summer
+                pstmt.executeUpdate();
+                
+                // Second record
+                pstmt.setString(1, "m002");
+                pstmt.setString(2, "f002");
+                pstmt.setString(3, "r001");
+                pstmt.setInt(4, 10);
+                pstmt.setInt(5, 2);  // Fall
+                pstmt.executeUpdate();
+                
+                pstmt.close();
+                System.out.println("Sample consumption data added successfully");
+            }
+            
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -1305,5 +1497,53 @@ public class ProjectDB {
                 throw new RuntimeException("Failed to close connection", ex);
             }
         }
+    }
+
+    // Get all fruits in the user's region
+    public ArrayList<FruitBean> getFruitsInRegion(String regionId) {
+        ArrayList<FruitBean> fruits = new ArrayList<>();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                "SELECT f.* FROM fruit f " +
+                "JOIN city c ON f.source_city_id = c.city_id " +
+                "WHERE c.region_id = ?"
+            );
+            stmt.setString(1, regionId);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                FruitBean fruit = new FruitBean();
+                fruit.setFruitId(rs.getString("fruit_id"));
+                fruit.setFruitName(rs.getString("fruit_name"));
+                fruits.add(fruit);
+            }
+            
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return fruits;
+    }
+
+    // Get all regions
+    public ArrayList<String> getAllRegions() {
+        ArrayList<String> regions = new ArrayList<>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT DISTINCT region_id FROM city");
+            
+            while (rs.next()) {
+                regions.add(rs.getString("region_id"));
+            }
+            
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return regions;
     }
 }
