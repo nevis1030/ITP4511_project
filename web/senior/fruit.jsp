@@ -1,13 +1,13 @@
 <%-- 
-    Document   : employee
-    Created on : 26 Apr 2025, 4:03:14 pm
+    Document   : shop_dashboard
+    Created on : 23 Apr 2025, 1:42:51 pm
     Author     : local_user
 --%>
 <%@page import="java.time.LocalDate" %>
 <%@page import="java.time.ZoneId" %>
 <%@page import="java.util.Date" %>
-<%@page import="java.util.ArrayList" %>
-<%@page import="ict.bean.EmployeeBean"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="ict.bean.SeniorFruitBean"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -40,47 +40,44 @@
 
                 <!-- Main Content -->
                 <div class="col-md-9 col-lg-10 p-4">
-                    <h3>Employee</h3>
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Employee List</h5>
-                            <a href="employee_add" class="btn btn-primary">New Employee</a>
+                            <h5 class="card-title">Fruit Management</h5>
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Employee ID</th>
-                                        <th>Role</th>
-                                        <th>Region</th>
-                                        <th>Location</th>
-                                        <th>Name</th>
+                                        <th>Fruit ID</th>
+                                        <th>Fruit Name</th>
+                                        <th>Source City ID</th>
+                                        <th>Source City</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <%
-                                        ArrayList<EmployeeBean> users = (ArrayList<EmployeeBean>)request.getAttribute("users");
-                                        if (users != null){
-                                            for (EmployeeBean user : users){
-                                                pageContext.setAttribute("user", user);
-                                    %>  
+                                        ArrayList<SeniorFruitBean> list = (ArrayList<SeniorFruitBean>)request.getAttribute("list");
+                                        if(list != null){
+                                            for(SeniorFruitBean item : list){
+                                    %>
                                     <tr>
-                                        <td><%= user.getUserId()%></td>
-                                        <td><%= user.getRole()%></td>
-                                        <td><%= user.getRegion()%></td>
-                                        <td><%= user.getLocation()%></td>
-                                        <td><%= user.getName()%></td>
+                                        <td><%=item.getFruitId()%></td>
+                                        <td><%=item.getFruitName()%></td>
+                                        <td><%=item.getSourceCityId()%></td>
+                                        <td><%=item.getSourceCityName()%></td>
                                         <td>
-                                            <form action="employee_edit" method="get">
-                                                <input type="hidden" name="targetUser" value="<%= user.getUserId()%>">
+                                            <form action="senior_fruit_info" method="post">
+                                                <input type="hidden" name="fruitId" value="<%=item.getFruitId()%>">
+                                                <input type="hidden" name="fruitName" value="<%=item.getFruitName()%>">
+                                                <input type="hidden" name="cityId" value="<%=item.getSourceCityId()%>">
                                                 <input type="submit" class="btn btn-primary" value="Edit">
                                             </form>
                                         </td>
                                     </tr>
-                                    <%
+                                    <%            
                                             }
                                         }
                                     %>
-                                </tbody>
+                                </tbody> 
                             </table>
                         </div>
                     </div>

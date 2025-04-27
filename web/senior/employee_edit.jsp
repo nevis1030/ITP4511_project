@@ -131,7 +131,8 @@
                                         }
                                     %>
                                 </select><br><br>
-                                <input type="submit" class="btn btn-primary" value="Change">
+                                <input type="submit" name="delete" class="btn btn-primary" value="Change">
+                                <input type="submit" name="delete" class="btn btn-danger" value="Delete">
                             </form>
                             <%
                               }

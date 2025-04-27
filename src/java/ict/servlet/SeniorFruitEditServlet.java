@@ -1,0 +1,36 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package ict.servlet;
+
+import ict.bean.FruitBean;
+import ict.db.ProjectDB;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ *
+ * @author local_user
+ */
+@WebServlet(name="SeniorFruitEditServlet", urlPatterns={"/senior_fruit_edit"})
+public class SeniorFruitEditServlet extends HttpServlet{
+    ProjectDB db = ProjectDB.getInstance();
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String fruitId = req.getParameter("fruitId");
+        String fruitName = req.getParameter("fruitName");
+        String sourceCityId = req.getParameter("sourceCityId");
+        
+        FruitBean fruit = new FruitBean(fruitId, sourceCityId, fruitName);
+        db.updateFruit(fruit);
+        req.getRequestDispatcher("senior_fruit").forward(req, resp);
+    }
+    
+    
+}

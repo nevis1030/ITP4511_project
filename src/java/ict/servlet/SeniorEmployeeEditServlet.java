@@ -90,25 +90,16 @@ public class SeniorEmployeeEditServlet extends HttpServlet {
         String shop_id = req.getParameter("shopId");
         String warehouse_id = req.getParameter("warehouseId");
         
-//        System.out.println("[DEBUG][parameter] targetUser = " + req.getParameter("userId"));
-//        System.out.println("[DEBUG][parameter] displayName = " + req.getParameter("displayName"));
-//        System.out.println("[DEBUG][parameter] username = " + req.getParameter("username"));
-//        System.out.println("[DEBUG][parameter] password = " + req.getParameter("password"));
-//        System.out.println("[DEBUG][parameter] role = " + req.getParameter("role"));
-//        System.out.println("[DEBUG][parameter] shopId = " + req.getParameter("shopId"));
-//        System.out.println("[DEBUG][parameter] warehouse = " + req.getParameter("warehouseId"));
-//
-//        System.out.println("[DEBUG] targetUser = " + userId);
-//        System.out.println("[DEBUG] displayName = " + displayName);
-//        System.out.println("[DEBUG] username = " + username);
-//        System.out.println("[DEBUG] password = " + password);
-//        System.out.println("[DEBUG] role = " + role);
-//        System.out.println("[DEBUG] shopId = " + shop_id);
-//        System.out.println("[DEBUG] warehouse = " + warehouse_id);
+        String delete = req.getParameter("delete");
         
-        UserBean user = new UserBean(userId, username, password, role, shop_id, warehouse_id, displayName);
-        db.updateUser(user);
-        req.getRequestDispatcher("employee").forward(req, resp);
+        if(delete.equals("Delete")){
+            db.deleteUser(userId);
+            req.getRequestDispatcher("employee").forward(req, resp);
+        }else{
+            UserBean user = new UserBean(userId, username, password, role, shop_id, warehouse_id, displayName);
+            db.updateUser(user);
+            req.getRequestDispatcher("employee").forward(req, resp);
+        }
     }
 
 }

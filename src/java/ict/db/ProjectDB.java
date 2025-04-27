@@ -15,6 +15,7 @@ import ict.bean.BorrowBean;
 import ict.bean.ShopBean;
 import ict.bean.CityBean;
 import ict.bean.ConsumptionBean;
+import ict.bean.WarehouseBean;
 import ict.util.CodeManager;
 import ict.util.IdManager;
 
@@ -444,7 +445,9 @@ public class ProjectDB {
     }
 
     public void addStockToWarehouse(String warehouseId, String fruitId, int quantity) {
-        String stockId = generateWarehouseStockId(warehouseId, fruitId);
+        IdManager iM = new IdManager();
+        String stockId = iM.combineId(warehouseId, fruitId);
+        System.out.println("[DEBUG] stockId = "+stockId);
         try {
             String query = "INSERT INTO stocklevel (stock_id, shop_id, fruit_id, warehouse_id, quantity) VALUES (?, NULL, ?, ?, ?)";
             PreparedStatement stmt = prepareStatement(query);
@@ -454,6 +457,10 @@ public class ProjectDB {
             stmt.setInt(4, quantity);
             stmt.executeUpdate();
         } catch (SQLException ex) {
+            System.err.println("[ERROR] SQL Exception occurred:");
+            System.err.println("SQL State: " + ex.getSQLState());
+            System.err.println("Error Code: " + ex.getErrorCode());
+            System.err.println("Message: " + ex.getMessage());
             throw new RuntimeException("Failed to add warehouse stock", ex);
         }
     }
@@ -651,12 +658,12 @@ public class ProjectDB {
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, reservationId);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 String shopId = rs.getString("shop_id");
                 String fruitId = rs.getString("fruit_id");
                 int quantity = rs.getInt("quantity");
-                
+
                 // Update stock level
                 String updateQuery = "UPDATE stocklevel "
                         + "SET quantity = quantity + ? "
@@ -666,13 +673,13 @@ public class ProjectDB {
                 updateStmt.setString(2, shopId);
                 updateStmt.setString(3, fruitId);
                 updateStmt.executeUpdate();
-                
+
                 // Update reservation status to approved (1)
                 query = "UPDATE reservation SET status = 1 WHERE reservation_id = ?";
                 stmt = prepareStatement(query);
                 stmt.setString(1, reservationId);
                 stmt.executeUpdate();
-                
+
                 System.out.println("Reservation approved successfully: " + reservationId);
             } else {
                 throw new RuntimeException("Reservation not found: " + reservationId);
@@ -689,14 +696,14 @@ public class ProjectDB {
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, reservationId);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 // Update reservation status to denied (2)
                 query = "UPDATE reservation SET status = 2 WHERE reservation_id = ?";
                 stmt = prepareStatement(query);
                 stmt.setString(1, reservationId);
                 stmt.executeUpdate();
-                
+
                 System.out.println("Reservation denied successfully: " + reservationId);
             } else {
                 throw new RuntimeException("Reservation not found: " + reservationId);
@@ -928,7 +935,6 @@ public class ProjectDB {
 
             // We don't need to update stock level at request creation time
             // Stock will be updated only when the request is approved
-
             System.out.println("Borrow request created successfully: " + borrowId);
 
         } catch (SQLException e) {
@@ -942,25 +948,25 @@ public class ProjectDB {
             PreparedStatement stmt = prepareStatement(query);
             stmt.setString(1, borrowId);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 String fromShopId = rs.getString("from_shop"); // target shop providing the fruit
                 String toShopId = rs.getString("to_shop");     // requesting shop
                 String fruitId = rs.getString("fruit_id");
                 int quantity = rs.getInt("quantity");
-                
+
                 // Update stock levels
                 // Decrease in from shop (target) since they're providing the fruit
                 updateStockLevel(fromShopId, fruitId, -quantity);
                 // Increase in to shop (requesting) since they're receiving the fruit
                 updateStockLevel(toShopId, fruitId, quantity);
-                
+
                 // Update borrow status
                 query = "UPDATE borrow SET status = 1 WHERE borrow_id = ?";
                 stmt = prepareStatement(query);
                 stmt.setString(1, borrowId);
                 stmt.executeUpdate();
-                
+
                 System.out.println("Borrow request approved successfully: " + borrowId);
             } else {
                 throw new RuntimeException("Borrow request not found: " + borrowId);
@@ -1288,6 +1294,29 @@ public class ProjectDB {
                 consumptions.add(consumption);
             }
             return consumptions;
+        } catch (SQLException ex) {
+            System.err.println("[ERROR] SQL Exception occurred:");
+            System.err.println("SQL State: " + ex.getSQLState());
+            System.err.println("Error Code: " + ex.getErrorCode());
+            System.err.println("Message: " + ex.getMessage());
+            throw new RuntimeException("Failed to list consumptions", ex);
+        }
+    }
+
+    public ArrayList<WarehouseBean> listAllWarehouse() {
+        try {
+            ArrayList<WarehouseBean> list = new ArrayList();
+            String sql = "SELECT * FROM warehouse";
+            PreparedStatement stmt = prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                WarehouseBean item = new WarehouseBean();
+                item.setWarehouseId(rs.getString("warehouse_id"));
+                item.setCityId(rs.getString("city_id"));
+                item.setWarehouseName(rs.getString("warehouse_name"));
+                list.add(item);
+            }
+            return list;
         } catch (SQLException ex) {
             System.err.println("[ERROR] SQL Exception occurred:");
             System.err.println("SQL State: " + ex.getSQLState());

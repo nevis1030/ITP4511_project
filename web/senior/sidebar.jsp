@@ -40,6 +40,7 @@
 
         <a class="nav-link" href="reservation">Reservation</a>
         <a class="nav-link" href="consumption">Consumption</a>
+        <a class="nav-link" href="senior_fruit">Fruit</a>
         <a class="nav-link" href="employee">Employee</a>
         <a class="nav-link" href="account">Account</a>
     </nav>

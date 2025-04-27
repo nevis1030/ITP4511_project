@@ -9,7 +9,7 @@
 <%@page import="java.time.ZoneId" %>
 <%@page import="java.util.Date" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="ict.bean.WarehouseStockBean"%>
+<%@page import="ict.bean.FruitBean"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="pageTitle" value="Management" scope="request"/>
@@ -43,43 +43,28 @@
                 <div class="col-md-9 col-lg-10 p-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5>Stock Level</h5>
-                            <a href="warehouse_stock_add" class="btn btn-primary">New Stock</a>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Fruit ID</th>
-                                        <th>Fruit Name</th>
-                                        <th>Quantity</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <h5>New Stock</h5>
+                            <form action="warehouse_stock_add" method="post">
+                                <input type="hidden" name="userId" value="${sessionScope.user.userId}">
+                                <input type="hidden" name="warehouseId" value="${sessionScope.user.warehouseId}">
+                                Warehouse ID: <input type="text" value="${sessionScope.user.warehouseId}" disabled="true"><br><br>
+                                Quantity: <input type="number" name="quantity" min="0" value="1"><br><br>
+                                Fruit:
+                                <select name="fruitId">
                                     <%
-                                        ArrayList<WarehouseStockBean> list = (ArrayList<WarehouseStockBean>)request.getAttribute("list");
-                                        if (list != null){
-                                            for(WarehouseStockBean item : list){
+                                        ArrayList<FruitBean> list = (ArrayList<FruitBean>)request.getAttribute("list");
+                                        if(list != null){
+                                            for(FruitBean item : list){
                                                 pageContext.setAttribute("item", item);
                                     %>
-                                    <tr>
-                                        <td><%= item.getStock_id()%></td>
-                                        <td><%= item.getFruit_id()%></td>
-                                        <td><%= item.getFruit_name()%></td>
-                                        <td><%= item.getQuantity()%></td>
-                                        <td>
-                                            <form action="warehouse_stock_edit" method="get">
-                                                <input type="hidden" name="stockId" value="<%= item.getStock_id()%>">
-                                                <input type="submit" class="btn btn-primary" value="Edit">
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    <%
+                                    <option value="<%=item.getFruitId()%>">Fruit Name: <%=item.getFruitName()%>, ID: <%=item.getFruitId()%></option>
+                                    <%            
                                             }
                                         }
                                     %>
-                                </tbody>
-                            </table>
+                                </select>
+                                <input type="submit" class="btn btn-primary" value="Add">
+                            </form>
                         </div>
                     </div>
                 </div>
